@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import {Eye, EyeClosed, FilePdf, PencilSimple, PlusCircle, WarningCircle} from "@phosphor-icons/react"
-import Google from "./assets/google-logo.png"
-import Screen from './assets/screen.png'
-import Laptop from './assets/laptop.png'
-import { FooterLogin } from './components/FooterLogin'
+import Google from "../assets/google-logo.png"
+import Screen from '../assets/screen.png'
+import Laptop from '../assets/laptop.png'
+import { FooterLogin } from '../components/FooterLogin'
 
-function App() {
+export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
 
   function handlePassword(){
@@ -65,15 +65,15 @@ function App() {
           <div className="flex flex-col justify-center w-[23rem] p-5">
             <div className='flex flex-col'>
               <div className='flex gap-3'>
-                <img src={Screen} className='w-20 mb-2'/>
-                <img src={Laptop} className='w-16 mb-2'/>
+                <img src={Screen} className='w-20 mb-2 animate-bounce-top'/>
+                <img src={Laptop} className='w-16 mb-2 animate-bounce-bottom'/>
               </div>
               <h1 className="text-2xl font-bold mb-10">Organize os seus notebooks aqui.</h1>
             </div>
 
             <div className='flex flex-col gap-5'>
               <div className='flex gap-3'>
-                <PlusCircle size={40} color='green' weight='fill' className='opacity-60'/>
+                <PlusCircle size={40} color='green' weight='fill' className='opacity-60 pb-3'/>
                 <span>Adicione as informações do notebook, fotos e organize as suas máquinas.</span>
               </div>
 
@@ -98,5 +98,3 @@ function App() {
     </>
   )
 }
-
-export default App
