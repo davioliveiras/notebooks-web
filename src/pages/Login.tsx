@@ -3,25 +3,56 @@ import {Eye, EyeClosed, FilePdf, PencilSimple, PlusCircle, WarningCircle} from "
 import Google from "../assets/google-logo.png"
 import Screen from '../assets/screen.png'
 import Laptop from '../assets/laptop.png'
-import { FooterLogin } from '../components/FooterLogin'
+import { FooterLogin } from '../components/login/FooterLogin'
+import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth'
+import app from '../libs/firebase'
+import api from '../libs/axios'
+import cookies, { Check } from '../libs/cookies'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
 
-  function handlePassword(){
+  const url = useNavigate()
+
+  const auth = getAuth(app)
+  const provider = new GoogleAuthProvider()
+  provider.setCustomParameters({
+    prompt: 'select_account'
+  })
+
+  function HandlePassword(){
     if(showPassword)
       setShowPassword(false)
     else
       setShowPassword(true)
   }
 
+  
+  function GoogleLogin(){
+    signInWithPopup(auth, provider).then((googleData) => {
+
+      api.post('/auth', googleData).then((token) => {
+        api.defaults.headers.common = {'Authorization': `Bearer ${token}` }
+        const cookiesLife = 60 * 60 * 24;
+        cookies.set('token', token.data, {path: '/', maxAge: cookiesLife})
+        url('/')
+      })
+      
+    }).catch((error) => {
+      console.log(error)
+    })
+    
+  }
+
   return (
     <>
+    {!Check() ? 
       <div className="flex my-screen flex-col items-center justify-between bg-neutral-50">
 
       <div className='flex items-center grow mb-10'>
         <div className='flex flex-col items-center h-min gap-16 lg:flex-row'>
-          <div className="flex flex-col rounded shadow bg-white p-5 m-2 mt-10 lg:mt-0">
+          <div className="flex flex-col rounded shadow bg-white p-5 m-2 mt-10 lg:mt-0 lg:animate-fade-in-left">
             <h1 className="text-2xl font-bold mb-10">Entrar ou registrar-se</h1>
 
             <div className="flex flex-col">
@@ -39,13 +70,15 @@ export default function Login() {
                   id="senha" type={showPassword ? "text" : "password"}
                 />
 
-                {showPassword ? <label htmlFor='senha'> <EyeClosed size={22} className='opacity-40 cursor-pointer' onClick={handlePassword}/> </label>
-                : <label htmlFor='senha'><Eye size={22} className='opacity-40 cursor-pointer' onClick={handlePassword}/> </label>}
+                {showPassword ? <label htmlFor='senha'> <EyeClosed size={22} className='opacity-40 cursor-pointer' onClick={HandlePassword}/> </label>
+                : <label htmlFor='senha'><Eye size={22} className='opacity-40 cursor-pointer' onClick={HandlePassword}/> </label>}
               </div>
 
               <div className='flex flex-col items-center w-full mt-10 gap-4'>
                 <button className="h-10 w-64 bg-gray-300 text-neutral-600 rounded cursor-not-allowed">Entrar com e-mail</button>
-                <button className="h-10 w-64 bg-gray-200 rounded hover:bg-gray-100 transition">
+
+                <button className="h-10 w-64 bg-gray-200 rounded hover:bg-gray-100 transition" 
+                onClick={GoogleLogin}>
                   <div className="flex justify-center items-center gap-3">
                     <img src={Google} className="w-7" alt="Google Logo"/>
                     <span className='pr-7'>Continuar com o Google</span>
@@ -62,7 +95,7 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center w-[23rem] p-5">
+          <div className="flex flex-col justify-center w-[23rem] p-5 lg:animate-fade-in-right">
             <div className='flex flex-col'>
               <div className='flex gap-3'>
                 <img src={Screen} className='w-20 mb-2 animate-bounce-top'/>
@@ -95,6 +128,8 @@ export default function Login() {
         </div>    
         <FooterLogin/>
       </div>
+    : <Navigate to='/'/>
+  }
     </>
   )
 }

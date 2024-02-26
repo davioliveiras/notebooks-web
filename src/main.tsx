@@ -5,15 +5,17 @@ import {
   RouterProvider
 } from 'react-router-dom'
 import './index.css'
-import Login from './pages/Login.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 import Edit from './pages/Edit.tsx'
+// import {CookieCheckLogin} from './CookieCheck.tsx'
 import Default from './layouts/Default.tsx'
+import { CheckLogin } from './CheckLogin.tsx'
+import New from './pages/New.tsx'
 
 const router = createBrowserRouter([
   {
     path: '/login',
-    element: <Login/>
+    element: <CheckLogin/>
   },
   {
     path: '/',
@@ -22,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Dashboard/>
+      },
+      {
+        path: '/novo',
+        element: <New/>
       },
       {
         path: '/edit/:noteId',
