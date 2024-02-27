@@ -9,7 +9,9 @@ export default function Default(){
       {Check() ? 
         <div className="flex flex-col bg-neutral-200 bg-opacity-50 my-screen">
           <Header/>
-          <Outlet/>
+          <div className="flex flex-col pb-16 grow w-full h-full">
+            <Outlet/>
+          </div>
         </div>
 
       : <Navigate to='/login'/> }

@@ -59,14 +59,14 @@ export default function Login() {
 
               <label htmlFor="e-mail">E-mail</label>
               <input 
-                className="border w-[300px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1" 
+                className="border w-[250px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1" 
                 id="e-mail" type="email"/>
 
               <label htmlFor="senha">Senha</label>
 
-              <div className='flex justify-between'>
+              <div className='flex '>
                 <input 
-                  className="border w-[300px] border-b-gray-400 border-transparent outline-none transition focus:border-b-sky-500 pb-1" 
+                  className="border w-[250px] border-b-gray-400 border-transparent outline-none transition focus:border-b-sky-500 pb-1" 
                   id="senha" type={showPassword ? "text" : "password"}
                 />
 

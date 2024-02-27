@@ -1,8 +1,9 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import Hero from "./Hero";
 import cookies from "../../libs/cookies";
-import { RiArchiveLine, RiHome6Line } from "react-icons/ri";
+import { RiArchiveLine, RiHome6Line, RiMenuLine } from "react-icons/ri";
 import { FiPlus } from "react-icons/fi";
+import { GoGear, GoTrash } from "react-icons/go";
 
 export default function Header(){
 
@@ -15,36 +16,46 @@ export default function Header(){
   
   return(
     <>
-      <div className="flex items-center bg-neutral-50 bg-opacity-50 p-3 mb-1 border-b-[1px] border-neutral-200">
-        <div className="flex grow gap-4 ml-2 font-medium text-sm">
+      <div className="flex justify-center bg-neutral-50 bg-opacity-50 mb-1 border-b-[1px] border-neutral-200 ">
+        <div className="flex max-w-[1366px] items-center w-full p-3">
+          <div className="grow gap-4 ml-2 font-medium text-sm h-min hidden min-[800px]:flex">
 
-          <NavLink to='/' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
-            <RiHome6Line size={18}/>            
-            Dashboard
-          </NavLink>  
+            <NavLink to='/' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
+              <RiHome6Line size={18}/>            
+              Dashboard
+            </NavLink>  
 
-          <NavLink to='/novo' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
-            <FiPlus size={18}/>            
-            Criar
-          </NavLink>
+            <div className="min-h-max w-px bg-neutral-300"/>
 
-          <NavLink to='/Arquivos' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
-            <RiArchiveLine size={18}/>            
-            Arquivados
-          </NavLink>    
+            <NavLink to='/novo' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
+              <FiPlus size={18}/>            
+              Criar
+            </NavLink>
+
+            <div className="min-h-max w-px bg-neutral-300"/>
+
+            <NavLink to='/Arquivos' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
+              <RiArchiveLine size={18}/>            
+              Arquivados
+            </NavLink>    
+          </div>
+
+          <div className="flex grow min-[800px]:invisible">
+            <RiMenuLine size={18}/>
+          </div>
+
+          filter search
+
+          <div className="flex justify-center">
+            <GoGear size={18} className="mr-4 mt-px"/>
+            <GoTrash size={18} className="mr-4 mt-px"/>         
+            <div className="min-h-max w-px mr-4 bg-neutral-300"/>
+          </div>          
+          <Hero/>
+          
+          <button onClick={Exit}>s</button>
 
         </div>
-
-        {/* <Archive size={20} weight="light"/> */}
-        {/* <Trash size={20} weight="light"/> */}
-        {/* <HiOutlineArchiveBox size={20}/>
-        <SlTrash  size={18} className="opacity-80"/> */}
-
-        <Hero/>
-        <button onClick={Exit}>
-          {/* <SignOut size={20} weight="bold" className="mr-6"/> */}
-          {/* <LuLogOut size={20}/> */}
-        </button>
       </div>
     </>
   )
