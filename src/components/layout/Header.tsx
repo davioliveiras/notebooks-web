@@ -20,14 +20,14 @@ export default function Header(){
         <div className="flex max-w-[1366px] items-center w-full p-3">
           <div className="grow gap-4 ml-2 font-medium text-sm h-min hidden min-[800px]:flex">
 
-            <NavLink to='/' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
+            <NavLink to='/dashboard' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
               <RiHome6Line size={18}/>            
               Dashboard
             </NavLink>  
 
             <div className="min-h-max w-px bg-neutral-300"/>
 
-            <NavLink to='/novo' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
+            <NavLink to='/criar' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
               <FiPlus size={18}/>            
               Criar
             </NavLink>
@@ -44,7 +44,7 @@ export default function Header(){
             <RiMenuLine size={18}/>
           </div>
 
-          filter search
+          {/* filter search */}
 
           <div className="flex justify-center">
             <GoGear size={18} className="mr-4 mt-px"/>

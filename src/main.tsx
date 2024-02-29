@@ -9,28 +9,29 @@ import Dashboard from './pages/Dashboard.tsx'
 import Edit from './pages/Edit.tsx'
 // import {CookieCheckLogin} from './CookieCheck.tsx'
 import Default from './layouts/Default.tsx'
-import { CheckLogin } from './CheckLogin.tsx'
 import New from './pages/New.tsx'
+import Login from './pages/Login.tsx'
 
 const router = createBrowserRouter([
   {
     path: '/login',
-    element: <CheckLogin/>
+    element: <Login/>
   },
+  
   {
     path: '/',
     element: <Default/>,
     children: [
       {
-        path: '/',
+        path: '/dashboard',
         element: <Dashboard/>
       },
       {
-        path: '/novo',
+        path: '/criar',
         element: <New/>
       },
       {
-        path: '/edit/:noteId',
+        path: 'notebook/:noteId',
         element: <Edit/>
       }
     ]

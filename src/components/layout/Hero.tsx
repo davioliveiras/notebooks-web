@@ -6,13 +6,15 @@ type User = {
   photo: string
 }
 
-let tokenDecoded: User
-
-if(cookies.get('token')){
-  tokenDecoded = jwtDecode<User>(cookies.get('token'))
-}
 
 export default function Hero(){
+
+
+console.log(cookies.get('token'))
+
+
+ const tokenDecoded = jwtDecode<User>(cookies.get('token'))
+
 
   return(
     <div className="flex items-center gap-3 mr-5 font-medium">

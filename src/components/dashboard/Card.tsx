@@ -14,7 +14,7 @@ export default function Card(props: props){
         <div className="grow flex flex-col gap-2">
           <div className="flex justify-center items-center gap-2">
             {/* <FaChevronLeft/> */}
-            <img src={Acer} alt="" className="w-32 rounded-sm shadow-md"/>
+            <img src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + props.notebook.photos[0].path} alt="" className="w-32 rounded-sm shadow-md"/>
             {/* <FaChevronRight /> */}
           </div>
           <div className="flex gap-2 justify-center">

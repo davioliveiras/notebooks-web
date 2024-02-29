@@ -14,6 +14,7 @@ export default function Dashboard(){
   console.log(notebooksList)
 
     useEffect(() => {
+      console.log(api.defaults)
       api.get('/notebook').then((result) => {
         if(result.data != 'No notebooks')
           setNotebooksList(result.data)
@@ -41,7 +42,7 @@ export default function Dashboard(){
                 Quando você cadastrar novos aparelhos eles aparecerão aqui.
               </span>
               <NavLink to={'/novo'} 
-                className='flex items-center font-medium text-lg text-white pl-4 pr-4 pt-1 pb-1 gap-2 mt-3 rounded bg-opacity-80 bg-green-900 hover:bg-opacity-90 transition'
+                className='flex items-center font-medium text-lg text-white pl-4 pr-4 pt-1 pb-1 gap-2 mt-5 rounded bg-opacity-80 bg-green-900 hover:bg-opacity-90 transition'
                 >
                 <FiPlus size={20} color='white'/>
                 Criar
