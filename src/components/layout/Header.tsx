@@ -3,7 +3,7 @@ import Hero from "./Hero";
 import cookies from "../../libs/cookies";
 import { RiArchiveLine, RiHome6Line, RiMenuLine } from "react-icons/ri";
 import { FiPlus } from "react-icons/fi";
-import { GoGear, GoTrash } from "react-icons/go";
+import { GoGear } from "react-icons/go";
 
 export default function Header(){
 
@@ -48,7 +48,6 @@ export default function Header(){
 
           <div className="flex justify-center">
             <GoGear size={18} className="mr-4 mt-px"/>
-            <GoTrash size={18} className="mr-4 mt-px"/>         
             <div className="min-h-max w-px mr-4 bg-neutral-300"/>
           </div>          
           <Hero/>

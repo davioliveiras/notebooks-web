@@ -7,11 +7,11 @@ export default function Default(){
   if(Check()){
     return(
       <div className="flex flex-col bg-neutral-200 bg-opacity-50 my-screen">
-          <Header/>
-          <div className="flex flex-col pb-16 grow w-full h-full">
-            <Outlet/>
-          </div>
+        <Header/>
+        <div className="flex flex-col pb-16 grow w-full h-full">
+          <Outlet/>
         </div>
+      </div>
     )
   }
   else{
