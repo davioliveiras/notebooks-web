@@ -11,6 +11,7 @@ import Edit from './pages/Edit.tsx'
 import Default from './layouts/Default.tsx'
 import New from './pages/New.tsx'
 import Login from './pages/Login.tsx'
+import Archives from './pages/Archives.tsx'
 
 const router = createBrowserRouter([
   {
@@ -31,8 +32,12 @@ const router = createBrowserRouter([
         element: <New/>
       },
       {
-        path: 'notebook/:noteId',
+        path: 'notebook/:noteCode',
         element: <Edit/>
+      },
+      {
+        path: 'arquivos',
+        element: <Archives/>
       }
     ]
   },

@@ -34,7 +34,7 @@ export default function Header(){
 
             <div className="min-h-max w-px bg-neutral-300"/>
 
-            <NavLink to='/Arquivos' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
+            <NavLink to='/arquivos' className="flex items-center gap-1 pl-2 pr-2 pt-px pb-px rounded-md transition">
               <RiArchiveLine size={18}/>            
               Arquivados
             </NavLink>    

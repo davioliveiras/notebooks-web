@@ -1,12 +1,29 @@
 import { Notebook } from "../../types/notebook";
 import Acer from "../../assets/20240227_101529.jpg"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import api from "../../libs/axios";
+import { MouseEvent, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { EditContext } from "../../contexts/EditContext";
 
 type props = {
   notebook: Notebook
 }
 
 export default function Card(props: props){
+
+  const { change } = useContext(EditContext)
+
+  const url = useNavigate()
+
+  const notebook = props.notebook
+
+  function deleteNotebook(event:  MouseEvent<HTMLButtonElement>){
+    event.preventDefault()
+    api.delete('/notebook/' + notebook.id)
+    url(0)
+  }
+
   return(
     <>
       <div className="flex items-center bg-white bg-opacity-90 h-56 w-96 rounded shadow font-normal">
@@ -21,11 +38,14 @@ export default function Card(props: props){
             <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition">
               Mais
             </button>
-            <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition">
+            
+            <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition"
+              onClick={() => {url(`/notebook/${notebook.code}`); change(notebook)}}>
               Editar
             </button>
-            <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition">
-              Arquivar
+            <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition"
+              onClick={deleteNotebook}>
+              deletarTEMP
             </button>
           </div>
         </div>

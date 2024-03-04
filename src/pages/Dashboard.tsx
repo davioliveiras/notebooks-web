@@ -43,7 +43,7 @@ export default function Dashboard(){
           <span className="text-neutral-400 font-base text-base flex text-justify">
             Quando você cadastrar novos aparelhos eles aparecerão aqui.
           </span>
-          <NavLink to={'/novo'} 
+          <NavLink to={'/criar'} 
             className='flex items-center font-medium text-lg text-white pl-4 pr-4 pt-1 pb-1 gap-2 mt-5 rounded bg-opacity-80 bg-green-900 hover:bg-opacity-90 transition'
             >
             <FiPlus size={20} color='white'/>

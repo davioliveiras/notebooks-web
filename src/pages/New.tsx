@@ -2,15 +2,16 @@ import { FiPlus } from "react-icons/fi";
 import api from "../libs/axios";
 import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
+import { Spinner } from "@phosphor-icons/react";
+import { useNavigate } from "react-router-dom";
 
 export default function New(){
 
   const [ imagesURLs, setImagesURLs ] = useState<string[]>([])
   const [ previewIndex, setPreviewIndex ] = useState(0)
-
-  console.log(imagesURLs.length)
-
-  const filesToUpload = new FormData()
+  const [ filesToUpload, setFilesToUpload ] = useState<FormData>()
+  const [ statusUpload, setStatusUpload ] = useState("Salvar")
+  const url = useNavigate()
 
   const code = useRef<HTMLInputElement>(null)
   const marcaNotebook = useRef<HTMLInputElement>(null)
@@ -35,11 +36,13 @@ export default function New(){
   function getImages(event: ChangeEvent<HTMLInputElement>){
     const { files } = event.target
     const photos : string[] = []
+    const filesData = new FormData()
 
     if(files){
       Array.from(files).forEach((item) => {
         photos.push(URL.createObjectURL(item))
-        filesToUpload.append('photo', item)
+        filesData.append('photo', item)
+        setFilesToUpload(filesData)
       })
       setImagesURLs(photos)
     }
@@ -47,6 +50,7 @@ export default function New(){
 
   async function submit(event: FormEvent<HTMLFormElement>){
     event.preventDefault();
+    setStatusUpload('Salvando')
 
     const notebook = {
       code: code.current?.value ? parseInt(code.current.value) : null,
@@ -88,26 +92,26 @@ export default function New(){
       photos: []
     }
 
-    console.log(JSON.stringify(notebook))
+    const headers = { 
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
 
-    console.log(notebook)
+    await api.post('upload-images', filesToUpload, headers).then((response) => {
+      console.log(response.data)
+      notebook.photos = response.data
+    }).catch((erro) => {
+      console.log(erro)
+    })
 
-    // const headers = { 
-    //   headers: {
-    //     'content-type': 'multipart/form-data'
-    //   }
-    // }
+    await api.post('/notebook', notebook).then((response) => {
+      console.log(response.data)
+    }).catch((erro) => {
+      console.log(erro)
+    })
 
-    // await api.post('upload-images', filesToUpload, headers).then((response) => {
-    //   console.log(response.data)
-    //   notebook.photos = response.data
-    // })
-
-    // await api.post('/notebook', notebook).then((response) => {
-    //   console.log(response.data)
-    // }).catch((erro) => {
-    //   console.log(erro)
-    // })
+    url('/dashboard')
   }
 
   function navigateImages(event: MouseEvent<HTMLButtonElement>){
@@ -130,163 +134,187 @@ export default function New(){
 
   return(
     <form onSubmit={submit} className="flex justify-center">
-      <div className="flex bg-white gap-14 pb-5 rounded shadow">
-        <div className="flex flex-col  pl-10 pr-10 pt-5">
-          <span className="text-lg font-semibold mb-5">Detalhes gerais</span>
+      <div className="flex bg-white pl-5 pr-5 gap-36 rounded shadow">
+        <div className="flex flex-col pt-5">
+          <div className="flex flex-col gap-1 mb-2">
+            <span className="text-lg font-semibold italic">Detalhes gerais</span>
+            <div className="h-px bg-neutral-200 w-36 mb-5"/>
+          </div>          
 
-          <label htmlFor="code">Código</label>
+          <label htmlFor="code">Código*</label>
           <input type="text" id="code" placeholder="123"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
           ref={code}/>
 
-          <label htmlFor="marcaNotebook">Marca</label>
+          <label htmlFor="marcaNotebook">Marca*</label>
           <input type="text" id="marcaNotebook" placeholder="Acer"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
           ref={marcaNotebook}/>
 
-          <label htmlFor="modeloNotebook">Modelo</label>
+          <label htmlFor="modeloNotebook">Modelo*</label>
           <input type="text" id="modeloNotebook" placeholder="Aspire 3"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
             ref={modeloNotebook}/>
 
-          <label htmlFor="sistema">Sistema</label>
+          <label htmlFor="sistema">Sistema*</label>
           <input type="text" id="sistema" placeholder="Linux"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
             ref={sistema}/>
 
-          <label htmlFor="versaoSistema">Versão do sistema</label>
+          <label htmlFor="versaoSistema">Versão do sistema*</label>
           <input type="text" id="versaoSistema" placeholder="Ubuntu 23.04"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
             ref={versaoSistema}/>
 
-          <label htmlFor="marcaProcessador">Marca do processador</label>
+          <label htmlFor="marcaProcessador">Marca do processador*</label>
           <input type="text" id="marcaProcessador" placeholder="Intel"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
             ref={marcaProcessador}/>
           
-          <label htmlFor="modeloProcessador">Modelo do processador</label>
+          <label htmlFor="modeloProcessador">Modelo do processador*</label>
           <input type="text" id="modeloProcessador" placeholder="i3-8130U"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
             ref={modeloProcessador}/>                 
         </div>
 
-        <div className="flex flex-col pl-5 pr-5 pt-5">          
-          <span className="text-lg font-semibold mb-5">Armazenamento e memória</span>
-          <div className="flex gap-20">
-            <div className="flex flex-col">
-              <label htmlFor="clock">Clock</label>
-              <div>
-              <input type="number" id="clock" placeholder="2.2"
-                className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                ref={clock}/>
-              <span className="ml-px">GHz</span>
-              </div> 
-
-              <label htmlFor="ram">RAM</label>
-              <div>
-              <input type="number" id="ram" placeholder="16"
-                className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                ref={ram}/>
-              <span className="ml-px">GB</span>
-              </div>
-
-              <label htmlFor="ddr">DDR</label>
-
-              <input type="number" id="ddr" placeholder="4"
-                className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                ref={ddr}/>
-            </div>
-
-            <div className="flex flex-col">
-              <label htmlFor="hd">HD</label>
-              <div>
-              <input type="number" id="hd" placeholder="1000"
-                className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                ref={hd}/>
-              <span className="ml-px">GB</span>
-              </div>
-
-              <label htmlFor="ssd">SSD</label>
-              <div>
-              <input type="number" id="ssd" placeholder="256"
-                className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                ref={ssd}/>
-              <span className="ml-px">GB</span>
-              </div>
-
-              {/* <div className="flex flex-col">
-                <span className="w-52 text-sm italic text-justify text-neutral-500">
-                  Você deve inserir a quantidade de pelo menos um tipo de armazenamento, HD ou SSD (ou os dois juntos).
-                </span>
-              </div> */}
-            </div>
-          </div>
-
-          <div className="flex flex-col">            
-            <span className="text-lg font-semibold mb-5">Tela e resolução</span>
-            <div className="flex gap-20">
-              <div className="flex flex-col">              
-                <label htmlFor="resolucao">Resolução</label>
-                <input type="text" id="resolucao" placeholder="1080x720"
-                  className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                  ref={resolucao}/>
-
-                <label htmlFor="polegadas">Polegadas</label>
-                <input type="number" id="polegadas" placeholder="14"
-                  className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                  ref={polegadas}/>
-
-                <label htmlFor="frequenciaTela">Frequência</label>
+        <div className="flex flex-col justify-between pt-5">
+          <div className="flex flex-col">      
+            <div className="flex flex-col gap-1 mb-2">
+              <span className="text-lg font-semibold italic">Armazenamento e memória</span>
+              <div className="h-px bg-neutral-200 w-60 mb-5"/>
+            </div>   
+            <div className="flex">
+              <div className="flex flex-col w-48">
+                <label htmlFor="clock">Clock*</label>
                 <div>
-                  <input type="number" id="frequenciaTela" placeholder="120"
-                    className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                    ref={frequenciaTela}/>
-                  <span className="ml-px">Hz</span>
-                </div>                        
+                <input type="number" id="clock" placeholder="2.2"
+                  className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                  ref={clock}/>
+                <span className="ml-px">GHz</span>
+                </div> 
+
+                <label htmlFor="ram">RAM*</label>
+                <div>
+                <input type="number" id="ram" placeholder="16"
+                  className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                  ref={ram}/>
+                <span className="ml-px">GB</span>
+                </div>
+
+                <label htmlFor="ddr">DDR*</label>
+
+                <input type="number" id="ddr" placeholder="4"
+                  className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                  ref={ddr}/>
               </div>
 
-              <div className="flex flex-col">                
-                
-                <label htmlFor="marcaPlaca">Marca da placa</label>
-                <input type="text" id="marcaPlaca" placeholder="NVIDIA"
+              <div className="flex flex-col">
+                <label htmlFor="hd">HD</label>
+                <div>
+                <input type="number" id="hd" placeholder="1000"
                   className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                  ref={marcaPlaca}/>
+                  ref={hd}/>
+                <span className="ml-px">GB</span>
+                </div>
 
-                <label htmlFor="moldePlaca">Modelo da placa</label>
-                <input type="text" id="marcaPlaca" placeholder="RTX 2000"
+                <label htmlFor="ssd">SSD</label>
+                <div>
+                <input type="number" id="ssd" placeholder="256"
                   className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-                  ref={modeloPlaca}/>
+                  ref={ssd}/>
+                <span className="ml-px">GB</span>
+                </div>
 
-                <div className="flex gap-2">
-                  <input type="checkbox" id="touch"
-                    ref={touch}/>            
-                  <label htmlFor="touch">Tela touch</label>          
+                <div className="flex flex-col">
+                  <span className="w-40 text-sm italic text-justify text-neutral-500">
+                    Inserir espaço de HD ou SDD (ou os dois juntos).
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div> 
+
+          <div className="flex flex-col">       
+            <div className="flex flex-col">
+              <div className="flex flex-col gap-1 mb-2">
+                <span className="text-lg font-semibold italic">Tela e resolução</span>
+                <div className="h-px bg-neutral-200 w-36 mb-5"/>
+              </div>
+              <div className="flex">
+                <div className="flex flex-col w-48">              
+                  <label htmlFor="resolucao">Resolução</label>
+                  <input type="text" id="resolucao" placeholder="1080x720"
+                    className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                    ref={resolucao}/>
+
+                  <label htmlFor="polegadas">Polegadas</label>
+                  <input type="number" id="polegadas" placeholder="14"
+                    className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                    ref={polegadas}/>
+
+                  <label htmlFor="frequenciaTela">Frequência</label>
+                  <div>
+                    <input type="number" id="frequenciaTela" placeholder="120"
+                      className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                      ref={frequenciaTela}/>
+                    <span className="ml-px">Hz</span>
+                  </div>                        
+                </div>
+
+                <div className="flex flex-col">                
+                  
+                  <label htmlFor="marcaPlaca">Marca da placa</label>
+                  <input type="text" id="marcaPlaca" placeholder="NVIDIA"
+                    className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                    ref={marcaPlaca}/>
+
+                  <label htmlFor="moldePlaca">Modelo da placa</label>
+                  <input type="text" id="marcaPlaca" placeholder="RTX 2000"
+                    className="border w-[100px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
+                    ref={modeloPlaca}/>
+
+                  <div className="flex gap-2">
+                    <input type="checkbox" id="touch"
+                      ref={touch}/>            
+                    <label htmlFor="touch">Tela touch</label>          
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>        
 
-        <div className="flex flex-col w-80 items-center gap-5 pt-5">
-          <span className="text-lg font-semibold mb-5">Imagens</span>
+        <div className="flex flex-col items-center gap-5 pt-5">
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <span className="text-lg font-semibold italic">Imagens</span>
+            <div className="h-px bg-neutral-200 w-24 mb-5"/>
+          </div>
           {imagesURLs.length == 0 ? 
             <>
               <input type="file" accept="image/png, image/jpeg" multiple={true} id="imagens" className="hidden" onChange={getImages}/>
               <label htmlFor="imagens">
-                <div className="flex justify-center items-center w-[180px] h-60 border-[2px] rounded border-dashed cursor-pointer">
-                  <FiPlus/>
+                <div className="flex items-center">
+                  <button>
+                    <BiChevronLeft size={30} className="fill-neutral-500 h-min cursor-not-allowed"/>
+                  </button>
+                  <div className="flex justify-center items-center w-[180px] h-60 border-[2px] rounded border-dashed cursor-pointer">
+                    <FiPlus/>
+                  </div>
+                  <button>
+                    <BiChevronRight size={30} className="fill-neutral-500 h-min cursor-not-allowed"/>
+                  </button>
                 </div>
               </label>
             </>
           : 
-            <div className="flex gap-5 h-60">
-              <button type="button"value={0} onClick={navigateImages}>
+            <div className="flex items-center h-60">
+              <button type="button"value={0} className="h-min" onClick={navigateImages}>
                 <BiChevronLeft size={30} className="hover:fill-sky-500 transition"/>
               </button>
               <div className="flex items-center">
                 <img src={imagesURLs[previewIndex]} className="w-[180px] rounded shadow" alt=""/>
               </div>            
-              <button type="button"value={1} onClick={navigateImages}>
+              <button type="button"value={1} className="h-min" onClick={navigateImages}>
                 <BiChevronRight size={30} className="hover:fill-sky-500 transition"/>
               </button>
             </div>
@@ -296,8 +324,13 @@ export default function New(){
             placeholder="Você pode escrever observações aqui..."
             ref={notas}/>
 
-          <button type="submit" className="bg-green-800 w-44 h-min rounded p-2 text-white">
-            Salvar
+          <button type="submit" 
+            className={`bg-green-800 w-60 h-min rounded p-2 text-white 
+              ${statusUpload == 'Salvando' ? 'cursor-not-allowed opacity-80 pr-4' : ''}`}>
+            <div className="flex w-full gap-2 justify-center items-center">
+              <Spinner size={23} className={`animate-spin ${statusUpload == 'Salvando' ? 'visible' : 'hidden'}`}/>
+              {statusUpload}
+            </div>
           </button>
         </div>
 
