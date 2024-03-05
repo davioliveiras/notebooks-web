@@ -10,6 +10,7 @@ export default function Dashboard(){
 
   async function myFetch(url: string){
     return api.get(url).then((result) => {
+      // console.log(result.data)
       return JSON.stringify(result.data)
     }).catch((error) => {
       throw error

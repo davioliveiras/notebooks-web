@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom'
 import './index.css'
 import Dashboard from './pages/Dashboard.tsx'
-import Edit from './pages/Edit.tsx'
+import Edit from "./pages/Edit.tsx"
 // import {CookieCheckLogin} from './CookieCheck.tsx'
 import Default from './layouts/Default.tsx'
 import New from './pages/New.tsx'

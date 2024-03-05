@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { Spinner } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 export default function New(){
 
@@ -12,6 +13,8 @@ export default function New(){
   const [ filesToUpload, setFilesToUpload ] = useState<FormData>()
   const [ statusUpload, setStatusUpload ] = useState("Salvar")
   const url = useNavigate()
+
+  const { register, handleSubmit } = useForm()
 
   const code = useRef<HTMLInputElement>(null)
   const marcaNotebook = useRef<HTMLInputElement>(null)
@@ -149,7 +152,7 @@ export default function New(){
           <label htmlFor="marcaNotebook">Marca*</label>
           <input type="text" id="marcaNotebook" placeholder="Acer"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-          ref={marcaNotebook}/>
+          {...register("example")}/>
 
           <label htmlFor="modeloNotebook">Modelo*</label>
           <input type="text" id="modeloNotebook" placeholder="Aspire 3"

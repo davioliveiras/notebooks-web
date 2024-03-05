@@ -1,18 +1,13 @@
 import { Notebook } from "../../types/notebook";
-import Acer from "../../assets/20240227_101529.jpg"
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import api from "../../libs/axios";
-import { MouseEvent, useContext } from "react";
+import { MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { EditContext } from "../../contexts/EditContext";
 
 type props = {
   notebook: Notebook
 }
 
 export default function Card(props: props){
-
-  const { change } = useContext(EditContext)
 
   const url = useNavigate()
 
@@ -40,7 +35,7 @@ export default function Card(props: props){
             </button>
             
             <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition"
-              onClick={() => {url(`/notebook/${notebook.code}`); change(notebook)}}>
+              onClick={() => {url(`/notebook/${notebook.code}`)}}>
               Editar
             </button>
             <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition"
