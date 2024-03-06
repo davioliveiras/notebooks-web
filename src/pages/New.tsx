@@ -4,7 +4,8 @@ import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { Spinner } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Notebook } from "../types/notebook";
 
 export default function New(){
 
@@ -14,7 +15,12 @@ export default function New(){
   const [ statusUpload, setStatusUpload ] = useState("Salvar")
   const url = useNavigate()
 
-  const { register, handleSubmit } = useForm()
+  type Inputs = {
+    example: string
+    exampleRequired: string
+  }  
+
+  const { register, handleSubmit, formState: { errors } } = useForm<Notebook>()
 
   const code = useRef<HTMLInputElement>(null)
   const marcaNotebook = useRef<HTMLInputElement>(null)
@@ -68,6 +74,7 @@ export default function New(){
       hertz: frequenciaTela.current?.value ? parseInt(frequenciaTela.current?.value) : null,
       touch: touch.current?.checked,
       system_version: versaoSistema.current?.value,
+      isArchived: false,
 
       processor: {
         model: modeloProcessador.current?.value,
@@ -135,6 +142,12 @@ export default function New(){
 
   }
 
+  const testehook: SubmitHandler<Notebook> = (data) => { 
+    // console.log(data.exampleRequired)
+    console.log(data.model) 
+    console.log('aiai eu fui pra api')
+  }
+
   return(
     <form onSubmit={submit} className="flex justify-center">
       <div className="flex bg-white pl-5 pr-5 gap-36 rounded shadow">
@@ -149,10 +162,11 @@ export default function New(){
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
           ref={code}/>
 
-          <label htmlFor="marcaNotebook">Marca*</label>
+          <label htmlFor="marcaNotebook" className={`${ errors.model && 'text-red-500'}`}>Marca* </label>
           <input type="text" id="marcaNotebook" placeholder="Acer"
             className="border w-[200px] border-b-gray-400 mb-5 border-transparent outline-none transition focus:border-b-sky-500 pb-1"
-          {...register("example")}/>
+          ref={marcaNotebook}/>
+          
 
           <label htmlFor="modeloNotebook">Modelo*</label>
           <input type="text" id="modeloNotebook" placeholder="Aspire 3"

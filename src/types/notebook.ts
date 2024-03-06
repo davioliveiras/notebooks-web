@@ -18,6 +18,7 @@ export type Notebook = {
       name: string
     }
   }
+  isArchived: boolean,
   hd: number,
   ssd: number,
   ram: number,

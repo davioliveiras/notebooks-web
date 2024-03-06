@@ -105,6 +105,7 @@ export default function Edit() {
       hertz: frequenciaTela,
       touch: touch,
       system_version: versaoSistema,
+      isArchived: false,
 
       processor: {
         model: modeloProcessador,
@@ -155,7 +156,7 @@ export default function Edit() {
       console.log(erro);
     });
 
-    url('/dashboard', {preventScrollReset: true});
+    url('/dashboard');
   }
 
   function navigateImages(event: MouseEvent<HTMLButtonElement>) {

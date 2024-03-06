@@ -23,4 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-.\src\libs\firebase.ts
+src\libs\firebase.ts

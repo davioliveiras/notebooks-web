@@ -1,35 +1,31 @@
 import Laptop from '../assets/laptop.png'
-import api from '../libs/axios'
 import Card from '../components/dashboard/Card'
 import { Notebook } from '../types/notebook'
 import { FiPlus } from 'react-icons/fi'
 import { NavLink } from 'react-router-dom'
-import useSWR from 'swr'
+import { useGetNotes } from '../libs/swr'
+import { useState } from 'react'
+import { Modal } from '../components/dashboard/Modal'
 
 export default function Dashboard(){
 
-  async function myFetch(url: string){
-    return api.get(url).then((result) => {
-      // console.log(result.data)
-      return JSON.stringify(result.data)
-    }).catch((error) => {
-      throw error
-    })
-  }
-
-  const { data, error, isLoading } = useSWR('/notebook', myFetch)
+  const [ showModal, setShowModal ] = useState<boolean>(false)
+  const { data, error, isLoading } = useGetNotes()
 
   if(error){
     return <div>ocorreu um erro</div>
   }
 
-  const dataConverted = data ? JSON.parse(data) : null
-
   if(isLoading){
     return <div>carregando</div>
-  }  
+  }
 
-  if(dataConverted == 'No notebooks'){
+  let allArchived = true
+
+  if(data != 'No notebooks')
+    data.map((items: Notebook) => { if(!items.isArchived) allArchived = false })
+
+  if(data == 'No notebooks' || allArchived){
     return(
       <div className='flex grow flex-col items-center justify-center'>
         <div className='flex gap-2 mb-10'>
@@ -57,9 +53,13 @@ export default function Dashboard(){
   else{
     return(
       <div className='flex gap-2'>          
-        {dataConverted.map((items: Notebook) =>           
-          <div key={items.code}><Card notebook={items}/></div>
-        )}          
+        {data.map((items: Notebook) =>
+          <>
+            <div key={items.code}><Card notebook={items}/></div>
+            <button onClick={() => {setShowModal(!showModal)}}>clique</button>
+            <Modal showModal={!showModal} setShowModal={setShowModal} notebook={items}/> 
+          </>
+        )}        
       </div> 
     )
   }

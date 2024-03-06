@@ -4,7 +4,7 @@ import Google from "../assets/google-logo.png"
 import Screen from '../assets/screen.png'
 import Laptop from '../assets/laptop.png'
 import { FooterLogin } from '../components/login/FooterLogin'
-import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth'
+import {getAuth, signInWithPopup, GoogleAuthProvider, signInWithRedirect} from 'firebase/auth'
 import app from '../libs/firebase'
 import api from '../libs/axios'
 import cookies, { Check } from '../libs/cookies'

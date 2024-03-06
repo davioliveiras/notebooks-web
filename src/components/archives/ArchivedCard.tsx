@@ -11,23 +11,21 @@ type props = {
 export default function Card(props: props){
 
   const url = useNavigate()
-  const { mutate } = useGetNotes()
 
   const notebook = props.notebook
 
   function deleteNotebook(event:  MouseEvent<HTMLButtonElement>){
-    mutate()
     event.preventDefault()
     api.delete('/notebook/' + notebook.id)
-    // url(0)
-    mutate()
+    url(0)
   }
 
-  function arquivar(){
-    // console.log(props)
+  const { mutate } = useGetNotes()
+
+  function desarquivar(){
     mutate()
     const note = props.notebook
-    note.isArchived = true
+    note.isArchived = false
     note.photos = ['']
     api.put('/notebook', note).then((response) => {
       console.log(response)
@@ -35,7 +33,7 @@ export default function Card(props: props){
     mutate()
   }
 
-  if(props.notebook.isArchived)
+  if(!props.notebook.isArchived)
     return
   else
   return(
@@ -50,8 +48,8 @@ export default function Card(props: props){
           </div>
           <div className="flex gap-2 justify-center">
             <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition"
-              onClick={arquivar}>
-              arquivarTEMP
+              onClick={desarquivar}>
+              desarquivarTEMP
             </button>
             
             <button className="bg-slate-700 text-slate-100 rounded pl-2 pr-2 pb-px pt-px hover:bg-slate-600 transition"
