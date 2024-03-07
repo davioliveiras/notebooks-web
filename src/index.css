@@ -2,11 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-.my-screen{
+.my-screen {
   min-height: 100vh;
 }
 
-.active{
-  background-color: rgb(230,230,230);
+.active {
+  background-color: rgb(230, 230, 230);
   box-shadow: 1px 1px rgb(0 0 0 / 0.1);
 }

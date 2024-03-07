@@ -1,21 +1,18 @@
-import { Navigate, Outlet } from "react-router-dom"
-import {Check} from "../libs/cookies"
-import Header from "../components/layout/Header"
+import {Navigate, Outlet} from 'react-router-dom';
+import {Check} from '../libs/cookies';
+import Header from '../components/layout/Header';
 
-export default function Default(){
-
-  if(Check()){
-    return(
-      <div className="flex flex-col bg-neutral-200 bg-opacity-50 my-screen">
-        <Header/>
-        <div className="flex flex-col p-5 grow w-full h-full">
-          <Outlet/>
+export default function Default() {
+  if (Check()) {
+    return (
+      <div className="my-screen flex flex-col bg-neutral-200 bg-opacity-50">
+        <Header />
+        <div className="flex h-full w-full grow flex-col p-5">
+          <Outlet />
         </div>
       </div>
-    )
+    );
+  } else {
+    return <Navigate to="/login" />;
   }
-  else{
-    return <Navigate to='/login'/>
-  }
-
 }

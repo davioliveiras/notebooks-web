@@ -1,13 +1,11 @@
-import Cookies from "universal-cookie";
+import Cookies from 'universal-cookie';
 
-const cookies = new Cookies()
+const cookies = new Cookies();
 
 export function Check() {
-  const token = cookies.get('token')
-  if(token)
-    return true
-  else
-    return false
+  const token = cookies.get('token');
+  if (token) return true;
+  else return false;
 }
 
-export default cookies
+export default cookies;
