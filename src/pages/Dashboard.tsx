@@ -8,7 +8,6 @@ import {useState} from 'react';
 import {Modal} from '../components/dashboard/Modal';
 
 export default function Dashboard() {
-  const [showModal, setShowModal] = useState<boolean>(false);
   const {data, error, isLoading} = useGetNotes();
 
   if (error) {
@@ -38,7 +37,9 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col items-center gap-2">
           <span className="text-4xl font-medium text-neutral-400">A lista está vazia!</span>
-          <span className="font-base flex text-justify text-base text-neutral-400">Quando você cadastrar novos aparelhos eles aparecerão aqui.</span>
+          <span className="font-base flex text-justify text-base text-neutral-400">
+            Quando você cadastrar novos aparelhos eles aparecerão aqui.
+          </span>
           <NavLink
             to={'/criar'}
             className="mt-5 flex items-center gap-2 rounded bg-green-900 bg-opacity-80 pb-1 pl-4 pr-4 pt-1 text-lg font-medium text-white transition hover:bg-opacity-90"
@@ -51,20 +52,12 @@ export default function Dashboard() {
     );
   } else {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-2 max-[1150px]:flex-col">
         {data.map((items: Notebook) => (
           <>
             <div key={items.code}>
               <Card notebook={items} />
             </div>
-            <button
-              onClick={() => {
-                setShowModal(!showModal);
-              }}
-            >
-              clique
-            </button>
-            <Modal showModal={!showModal} setShowModal={setShowModal} notebook={items} />
           </>
         ))}
       </div>

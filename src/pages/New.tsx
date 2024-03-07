@@ -14,10 +14,7 @@ export default function New() {
   const [statusUpload, setStatusUpload] = useState('Salvar');
   const url = useNavigate();
 
-  type Inputs = {
-    example: string;
-    exampleRequired: string;
-  };
+  type Inputs = {example: string; exampleRequired: string};
 
   const {
     register,
@@ -82,18 +79,12 @@ export default function New() {
       processor: {
         model: modeloProcessador.current?.value,
         clock: clock.current?.value ? parseInt(clock.current?.value) : null,
-        brand: {
-          name: marcaProcessador.current?.value,
-        },
+        brand: {name: marcaProcessador.current?.value},
       },
 
-      system: {
-        name: sistema.current?.value,
-      },
+      system: {name: sistema.current?.value},
 
-      brand: {
-        name: marcaNotebook.current?.value,
-      },
+      brand: {name: marcaNotebook.current?.value},
 
       graphics_card: {
         model: modeloPlaca.current?.value,
@@ -105,11 +96,7 @@ export default function New() {
       photos: [],
     };
 
-    const headers = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
+    const headers = {headers: {'Content-Type': 'multipart/form-data'}};
 
     await api
       .post('upload-images', filesToUpload, headers)
@@ -148,12 +135,11 @@ export default function New() {
   const testehook: SubmitHandler<Notebook> = (data) => {
     // console.log(data.exampleRequired)
     console.log(data.model);
-    console.log('aiai eu fui pra api');
   };
 
   return (
     <form onSubmit={submit} className="flex justify-center">
-      <div className="flex gap-36 rounded bg-white pl-5 pr-5 shadow">
+      <div className="flex gap-36 rounded bg-white pl-5 pr-5 shadow max-[1150px]:flex-col max-[1150px]:gap-5">
         <div className="flex flex-col pt-5">
           <div className="mb-2 flex flex-col gap-1">
             <span className="text-lg font-semibold italic">Detalhes gerais</span>
@@ -295,7 +281,9 @@ export default function New() {
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="w-40 text-justify text-sm italic text-neutral-500">Inserir espaço de HD ou SDD (ou os dois juntos).</span>
+                  <span className="w-40 text-justify text-sm italic text-neutral-500">
+                    Inserir espaço de HD ou SDD (ou os dois juntos).
+                  </span>
                 </div>
               </div>
             </div>

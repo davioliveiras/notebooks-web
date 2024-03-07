@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom';
 import './index.css';
 import Dashboard from './pages/Dashboard.tsx';
 import Edit from './pages/Edit.tsx';
@@ -20,6 +20,10 @@ const router = createBrowserRouter([
     path: '/',
     element: <Default />,
     children: [
+      {
+        path: '/',
+        element: <Navigate to={'/dashboard'} />,
+      },
       {
         path: '/dashboard',
         element: <Dashboard />,

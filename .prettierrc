@@ -2,7 +2,7 @@
   "singleAttributePerLine": false,
   "plugins": ["prettier-plugin-tailwindcss"],
   "singleQuote": true,
-  "printWidth": 150,
+  "printWidth": 135,
   "trailingComma": "all",
   "bracketSpacing": false,
   "tabWidth": 2

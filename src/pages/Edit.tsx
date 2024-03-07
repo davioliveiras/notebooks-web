@@ -354,7 +354,9 @@ export default function Edit() {
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="w-40 text-justify text-sm italic text-neutral-500">Inserir espaço de HD ou SDD (ou os dois juntos).</span>
+                  <span className="w-40 text-justify text-sm italic text-neutral-500">
+                    Inserir espaço de HD ou SDD (ou os dois juntos).
+                  </span>
                 </div>
               </div>
             </div>

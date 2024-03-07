@@ -7,7 +7,7 @@ export default function Default() {
     return (
       <div className="my-screen flex flex-col bg-neutral-200 bg-opacity-50">
         <Header />
-        <div className="flex h-full w-full grow flex-col p-5">
+        <div className="mt-[60px] flex h-full w-full grow flex-col items-center p-1">
           <Outlet />
         </div>
       </div>

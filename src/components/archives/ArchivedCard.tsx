@@ -48,20 +48,17 @@ export default function Card(props: props) {
               {/* <FaChevronRight /> */}
             </div>
             <div className="flex justify-center gap-2">
-              <button className="rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600" onClick={desarquivar}>
-                desarquivarTEMP
-              </button>
-
               <button
                 className="rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600"
-                onClick={() => {
-                  url(`/notebook/${notebook.code}`);
-                }}
+                onClick={desarquivar}
               >
-                Editar
+                Desarquivar
               </button>
-              <button className="rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600" onClick={deleteNotebook}>
-                deletarTEMP
+              <button
+                className="rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600"
+                onClick={deleteNotebook}
+              >
+                Deletar
               </button>
             </div>
           </div>
