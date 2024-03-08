@@ -3,9 +3,10 @@ import './Modal.css';
 import {AiOutlineClose} from 'react-icons/ai';
 import {useEffect, useState, MouseEvent} from 'react';
 import {BiChevronLeft, BiChevronRight} from 'react-icons/bi';
-import generatePDF, {Margin} from 'react-to-pdf';
 import api from '../../libs/axios';
 import {useGetNotes} from '../../libs/swr';
+import Pdfpage from './Pdfpage';
+import {PDFDownloadLink} from '@react-pdf/renderer';
 
 type props = {
   showModal: boolean;
@@ -14,8 +15,6 @@ type props = {
 };
 
 type paths = {path: string};
-
-const meuElemento = () => document.getElementById('teste');
 
 export function Modal({showModal, setShowModal, notebook}: props) {
   const {mutate} = useGetNotes();
@@ -70,7 +69,7 @@ export function Modal({showModal, setShowModal, notebook}: props) {
     <div
       className={`myModal ${!showModal ? 'flex' : 'hidden'} items-center justify-center bg-neutral-500 bg-opacity-50 p-10 backdrop-blur-sm`}
     >
-      <div className="flex h-full max-h-[1000px] min-h-min w-full max-w-[1500px] flex-col gap-10 rounded bg-white p-5">
+      <div id="teste" className="flex h-full max-h-[1000px] min-h-min w-full max-w-[1500px] flex-col gap-10 rounded  bg-white p-5">
         <div className="flex justify-between">
           <span className="text-2xl font-bold">Notebook {notebook.code}</span>
           <AiOutlineClose
@@ -82,7 +81,7 @@ export function Modal({showModal, setShowModal, notebook}: props) {
           />
         </div>
 
-        <div className="flex justify-between gap-10 bg-green-200">
+        <div className="flex justify-between gap-10 ">
           <div className="flex flex-col gap-5">
             <div className="flex flex-col">
               <div className="font-semibold">Marca</div>
@@ -169,19 +168,17 @@ export function Modal({showModal, setShowModal, notebook}: props) {
             </div>
 
             <div className="flex">
-              <button
-                type="button"
-                className="rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600"
-                onClick={() =>
-                  generatePDF(meuElemento, {
-                    method: 'open',
-                    page: {margin: Margin.SMALL},
-                    canvas: {mimeType: 'image/jpeg', qualityRatio: 1},
-                  })
+              <PDFDownloadLink document={<Pdfpage notebook={notebook} />} fileName={`Notebook ${notebook.code}`}>
+                {({loading}) =>
+                  loading ? (
+                    'isloading'
+                  ) : (
+                    <button className="rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600">
+                      Gerar PDF
+                    </button>
+                  )
                 }
-              >
-                Gerar PDF
-              </button>
+              </PDFDownloadLink>
 
               <button
                 className="rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600"
@@ -198,15 +195,6 @@ export function Modal({showModal, setShowModal, notebook}: props) {
               </button>
             </div>
           </div>
-
-          {/* <div id="teste" >
-            <span>oi</span>
-            <img
-              src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + arrayURL[viewIndex]}
-              className="h-20 w-32 rounded"
-              alt="a"
-            />
-          </div> */}
         </div>
       </div>
     </div>

@@ -54,7 +54,7 @@ export default function Login() {
         <div className="my-screen flex flex-col items-center justify-between bg-neutral-50">
           <div className="mb-10 flex grow items-center">
             <div className="flex h-min flex-col items-center gap-16 lg:flex-row">
-              <div className="m-2 mt-10 flex flex-col rounded bg-white p-5 shadow lg:mt-0 lg:animate-fade-in-left">
+              <div className="m-2 mt-10 flex flex-col rounded bg-white p-5 shadow max-[1000px]:p-1 lg:mt-0 lg:animate-fade-in-left">
                 <h1 className="mb-10 text-2xl font-bold">Entrar ou registrar-se</h1>
 
                 <div className="flex flex-col">

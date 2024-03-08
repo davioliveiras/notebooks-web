@@ -44,6 +44,8 @@ export default function Card(props: props) {
                 src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + props.notebook.photos[0].path}
                 alt=""
                 className="w-32 rounded-sm shadow-md"
+                onLoad={() => console.log('carreguei')}
+                loading="lazy"
               />
               {/* <FaChevronRight /> */}
             </div>

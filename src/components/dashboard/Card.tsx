@@ -49,6 +49,8 @@ export default function Card(props: props) {
                 src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + props.notebook.photos[0].path}
                 alt=""
                 className="h-[175px]  rounded-sm shadow-md"
+                // onLoad={() => console.log('hm')}
+                // loading="lazy"
               />
             </div>
             <div className="flex gap-1">
