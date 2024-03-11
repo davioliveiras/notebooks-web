@@ -6,41 +6,16 @@ import {Spinner} from '@phosphor-icons/react';
 import {useNavigate} from 'react-router-dom';
 import {SubmitHandler, useForm} from 'react-hook-form';
 import {Notebook} from '../types/notebook';
+import './new.css';
 
 export default function New() {
   const [imagesURLs, setImagesURLs] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [filesToUpload, setFilesToUpload] = useState<FormData>();
   const [statusUpload, setStatusUpload] = useState('Salvar');
+  const [isPhotosUploaded, setIsPhotosUploaded] = useState(true);
+  const [isStorageDefined, setIsStorageDefined] = useState(true);
   const url = useNavigate();
-
-  type Inputs = {example: string; exampleRequired: string};
-
-  const {
-    register,
-    handleSubmit,
-    formState: {errors},
-  } = useForm<Notebook>();
-
-  const code = useRef<HTMLInputElement>(null);
-  const marcaNotebook = useRef<HTMLInputElement>(null);
-  const modeloNotebook = useRef<HTMLInputElement>(null);
-  const sistema = useRef<HTMLInputElement>(null);
-  const versaoSistema = useRef<HTMLInputElement>(null);
-  const marcaProcessador = useRef<HTMLInputElement>(null);
-  const modeloProcessador = useRef<HTMLInputElement>(null);
-  const clock = useRef<HTMLInputElement>(null);
-  const ram = useRef<HTMLInputElement>(null);
-  const ddr = useRef<HTMLInputElement>(null);
-  const hd = useRef<HTMLInputElement>(null);
-  const ssd = useRef<HTMLInputElement>(null);
-  const resolucao = useRef<HTMLInputElement>(null);
-  const polegadas = useRef<HTMLInputElement>(null);
-  const frequenciaTela = useRef<HTMLInputElement>(null);
-  const touch = useRef<HTMLInputElement>(null);
-  const notas = useRef<HTMLTextAreaElement>(null);
-  const marcaPlaca = useRef<HTMLInputElement>(null);
-  const modeloPlaca = useRef<HTMLInputElement>(null);
 
   function getImages(event: ChangeEvent<HTMLInputElement>) {
     const {files} = event.target;
@@ -57,69 +32,6 @@ export default function New() {
     }
   }
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setStatusUpload('Salvando');
-
-    const notebook = {
-      code: code.current?.value ? parseInt(code.current.value) : null,
-      ram: ram.current?.value ? parseInt(ram.current?.value) : null,
-      ddr: ddr.current?.value ? parseInt(ddr.current?.value) : null,
-      hd: hd.current?.value ? parseInt(hd.current?.value) : null,
-      ssd: ssd.current?.value ? parseInt(ssd.current?.value) : null,
-      model: modeloNotebook.current?.value,
-      note: notas.current?.value,
-      resolution: resolucao.current?.value,
-      inch: polegadas.current?.value ? parseInt(polegadas.current?.value) : null,
-      hertz: frequenciaTela.current?.value ? parseInt(frequenciaTela.current?.value) : null,
-      touch: touch.current?.checked,
-      system_version: versaoSistema.current?.value,
-      isArchived: false,
-
-      processor: {
-        model: modeloProcessador.current?.value,
-        clock: clock.current?.value ? parseInt(clock.current?.value) : null,
-        brand: {name: marcaProcessador.current?.value},
-      },
-
-      system: {name: sistema.current?.value},
-
-      brand: {name: marcaNotebook.current?.value},
-
-      graphics_card: {
-        model: modeloPlaca.current?.value,
-        brand: {
-          name: marcaPlaca.current?.value,
-        },
-      },
-
-      photos: [],
-    };
-
-    const headers = {headers: {'Content-Type': 'multipart/form-data'}};
-
-    await api
-      .post('upload-images', filesToUpload, headers)
-      .then((response) => {
-        console.log(response.data);
-        notebook.photos = response.data;
-      })
-      .catch((erro) => {
-        console.log(erro);
-      });
-
-    await api
-      .post('/notebook', notebook)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((erro) => {
-        console.log(erro);
-      });
-
-    url('/dashboard');
-  }
-
   function navigateImages(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
 
@@ -132,224 +44,287 @@ export default function New() {
     }
   }
 
-  const testehook: SubmitHandler<Notebook> = (data) => {
-    // console.log(data.exampleRequired)
-    console.log(data.model);
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<Notebook>();
+
+  const onSubmit: SubmitHandler<Notebook> = async (data) => {
+    if (imagesURLs.length == 0) {
+      setIsPhotosUploaded(false);
+      return;
+    }
+
+    if (Number.isNaN(data.hd) && Number.isNaN(data.ssd)) {
+      setIsStorageDefined(false);
+      return;
+    }
+
+    setStatusUpload('Salvando');
+
+    data.isArchived = false;
+
+    const headers = {headers: {'Content-Type': 'multipart/form-data'}};
+
+    await api
+      .post('upload-images', filesToUpload, headers)
+      .then((response) => {
+        console.log(response.data);
+        data.photos = response.data;
+      })
+      .catch((erro) => {
+        console.log(erro);
+      });
+
+    await api
+      .post('/notebook', data)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((erro) => {
+        console.log(erro);
+      });
+
+    url('/dashboard');
   };
 
   return (
-    <form onSubmit={submit} className="flex justify-center">
-      <div className="flex gap-36 rounded bg-white pl-5 pr-5 shadow max-[1150px]:flex-col max-[1150px]:gap-5">
-        <div className="flex flex-col pt-5">
-          <div className="mb-2 flex flex-col gap-1">
-            <span className="text-lg font-semibold italic">Detalhes gerais</span>
-            <div className="mb-5 h-px w-36 bg-neutral-200" />
+    <form onSubmit={handleSubmit(onSubmit)} className="flex grow justify-center font-roboto ">
+      <div className="mt-10 flex h-min gap-36 rounded pl-5 pr-5 max-[1300px]:flex-col max-[1300px]:gap-5">
+        <div className="max-[1300px]:flex max-[1300px]:justify-center">
+          <div className="flex flex-col pt-5">
+            <div className="mb-2 flex flex-col gap-1">
+              <span className="mb-3 text-xl font-bold">Detalhes gerais</span>
+            </div>
+
+            <label htmlFor="code" className={`${errors.code && 'text-red-500'}`}>
+              Código
+            </label>
+            <input
+              type="number"
+              id="code"
+              placeholder="123"
+              className="bg mb-5 w-[200px] border border-transparent border-b-gray-400 bg-transparent pb-1 outline-none transition focus:border-b-sky-500"
+              {...register('code', {required: true, valueAsNumber: true})}
+            />
+
+            <label htmlFor="marcaNotebook" className={`${errors.brand?.name && 'text-red-500'}`}>
+              Marca*
+            </label>
+            <input
+              type="text"
+              id="marcaNotebook"
+              placeholder="Acer"
+              className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+              {...register('brand.name', {required: true})}
+            />
+
+            <label htmlFor="modeloNotebook" className={`${errors.model && 'text-red-500'}`}>
+              Modelo*
+            </label>
+            <input
+              type="text"
+              id="modeloNotebook"
+              placeholder="Aspire 3"
+              className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+              {...register('model', {required: true})}
+            />
+
+            <label htmlFor="sistema" className={`${errors.system?.name && 'text-red-500'}`}>
+              Sistema*
+            </label>
+            <input
+              type="text"
+              id="sistema"
+              placeholder="Linux"
+              className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+              {...register('system.name', {required: true})}
+            />
+
+            <label htmlFor="versaoSistema" className={`${errors.system_version && 'text-red-500'}`}>
+              Versão do sistema*
+            </label>
+            <input
+              type="text"
+              id="versaoSistema"
+              placeholder="Ubuntu 23.04"
+              className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+              {...register('system_version', {required: true})}
+            />
+
+            <label htmlFor="marcaProcessador" className={`${errors.processor?.brand?.name && 'text-red-500'}`}>
+              Marca do processador*
+            </label>
+            <input
+              type="text"
+              id="marcaProcessador"
+              placeholder="Intel"
+              className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+              {...register('processor.brand.name', {required: true})}
+            />
+
+            <label htmlFor="modeloProcessador" className={`${errors.processor?.model && 'text-red-500'}`}>
+              Modelo do processador*
+            </label>
+            <input
+              type="text"
+              id="modeloProcessador"
+              placeholder="i3-8130U"
+              className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+              {...register('processor.model', {required: true})}
+            />
           </div>
-
-          <label htmlFor="code">Código*</label>
-          <input
-            type="text"
-            id="code"
-            placeholder="123"
-            className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-            ref={code}
-          />
-
-          <label htmlFor="marcaNotebook" className={`${errors.model && 'text-red-500'}`}>
-            Marca*{' '}
-          </label>
-          <input
-            type="text"
-            id="marcaNotebook"
-            placeholder="Acer"
-            className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-            ref={marcaNotebook}
-          />
-
-          <label htmlFor="modeloNotebook">Modelo*</label>
-          <input
-            type="text"
-            id="modeloNotebook"
-            placeholder="Aspire 3"
-            className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-            ref={modeloNotebook}
-          />
-
-          <label htmlFor="sistema">Sistema*</label>
-          <input
-            type="text"
-            id="sistema"
-            placeholder="Linux"
-            className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-            ref={sistema}
-          />
-
-          <label htmlFor="versaoSistema">Versão do sistema*</label>
-          <input
-            type="text"
-            id="versaoSistema"
-            placeholder="Ubuntu 23.04"
-            className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-            ref={versaoSistema}
-          />
-
-          <label htmlFor="marcaProcessador">Marca do processador*</label>
-          <input
-            type="text"
-            id="marcaProcessador"
-            placeholder="Intel"
-            className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-            ref={marcaProcessador}
-          />
-
-          <label htmlFor="modeloProcessador">Modelo do processador*</label>
-          <input
-            type="text"
-            id="modeloProcessador"
-            placeholder="i3-8130U"
-            className="mb-5 w-[200px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-            ref={modeloProcessador}
-          />
         </div>
 
-        <div className="flex flex-col justify-between pt-5">
-          <div className="flex flex-col">
-            <div className="mb-2 flex flex-col gap-1">
-              <span className="text-lg font-semibold italic">Armazenamento e memória</span>
-              <div className="mb-5 h-px w-60 bg-neutral-200" />
-            </div>
-            <div className="flex">
-              <div className="flex w-48 flex-col">
-                <label htmlFor="clock">Clock*</label>
-                <div>
-                  <input
-                    type="number"
-                    id="clock"
-                    placeholder="2.2"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={clock}
-                  />
-                  <span className="ml-px">GHz</span>
-                </div>
-
-                <label htmlFor="ram">RAM*</label>
-                <div>
-                  <input
-                    type="number"
-                    id="ram"
-                    placeholder="16"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={ram}
-                  />
-                  <span className="ml-px">GB</span>
-                </div>
-
-                <label htmlFor="ddr">DDR*</label>
-
-                <input
-                  type="number"
-                  id="ddr"
-                  placeholder="4"
-                  className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                  ref={ddr}
-                />
-              </div>
-
-              <div className="flex flex-col">
-                <label htmlFor="hd">HD</label>
-                <div>
-                  <input
-                    type="number"
-                    id="hd"
-                    placeholder="1000"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={hd}
-                  />
-                  <span className="ml-px">GB</span>
-                </div>
-
-                <label htmlFor="ssd">SSD</label>
-                <div>
-                  <input
-                    type="number"
-                    id="ssd"
-                    placeholder="256"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={ssd}
-                  />
-                  <span className="ml-px">GB</span>
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="w-40 text-justify text-sm italic text-neutral-500">
-                    Inserir espaço de HD ou SDD (ou os dois juntos).
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col">
+        <div className="flex justify-center">
+          <div className="flex flex-col justify-between pt-5 max-[500px]:gap-10">
             <div className="flex flex-col">
               <div className="mb-2 flex flex-col gap-1">
-                <span className="text-lg font-semibold italic">Tela e resolução</span>
-                <div className="mb-5 h-px w-36 bg-neutral-200" />
+                <span className="mb-3 font-roboto text-xl font-bold">Armazenamento e memória</span>
               </div>
-              <div className="flex">
-                <div className="flex w-48 flex-col">
-                  <label htmlFor="resolucao">Resolução</label>
-                  <input
-                    type="text"
-                    id="resolucao"
-                    placeholder="1080x720"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={resolucao}
-                  />
-
-                  <label htmlFor="polegadas">Polegadas</label>
-                  <input
-                    type="number"
-                    id="polegadas"
-                    placeholder="14"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={polegadas}
-                  />
-
-                  <label htmlFor="frequenciaTela">Frequência</label>
+              <div className="flex max-[500px]:flex-col max-[500px]:items-center">
+                <div className="flex flex-col min-[500px]:w-48">
+                  <label htmlFor="clock" className={`${errors.processor?.clock && 'text-red-500'}`}>
+                    Clock*
+                  </label>
                   <div>
                     <input
                       type="number"
-                      id="frequenciaTela"
-                      placeholder="120"
+                      id="clock"
+                      placeholder="2.2"
                       className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                      ref={frequenciaTela}
+                      {...register('processor.clock', {required: true, valueAsNumber: true})}
                     />
-                    <span className="ml-px">Hz</span>
+                    <span className="ml-px">GHz</span>
                   </div>
+
+                  <label htmlFor="ram" className={`${errors.ram && 'text-red-500'}`}>
+                    RAM*
+                  </label>
+                  <div>
+                    <input
+                      type="number"
+                      id="ram"
+                      placeholder="16"
+                      className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                      {...register('ram', {required: true, valueAsNumber: true})}
+                    />
+                    <span className="ml-px">GB</span>
+                  </div>
+
+                  <label htmlFor="ddr" className={`${errors.ddr && 'text-red-500'}`}>
+                    DDR*
+                  </label>
+
+                  <input
+                    type="number"
+                    id="ddr"
+                    placeholder="4"
+                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                    {...register('ddr', {required: true, valueAsNumber: true})}
+                  />
                 </div>
 
-                <div className="flex flex-col">
-                  <label htmlFor="marcaPlaca">Marca da placa</label>
-                  <input
-                    type="text"
-                    id="marcaPlaca"
-                    placeholder="NVIDIA"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={marcaPlaca}
-                  />
+                <div className="flex  flex-col">
+                  <label htmlFor="hd">HD</label>
+                  <div>
+                    <input
+                      type="number"
+                      id="hd"
+                      placeholder="1000"
+                      className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                      {...register('hd', {valueAsNumber: true})}
+                    />
+                    <span className="ml-px">GB</span>
+                  </div>
 
-                  <label htmlFor="moldePlaca">Modelo da placa</label>
-                  <input
-                    type="text"
-                    id="marcaPlaca"
-                    placeholder="RTX 2000"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    ref={modeloPlaca}
-                  />
+                  <label htmlFor="ssd">SSD</label>
+                  <div>
+                    <input
+                      type="number"
+                      id="ssd"
+                      placeholder="256"
+                      className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                      {...register('ssd', {valueAsNumber: true})}
+                    />
+                    <span className="ml-px">GB</span>
+                  </div>
 
-                  <div className="flex gap-2">
-                    <input type="checkbox" id="touch" ref={touch} />
-                    <label htmlFor="touch">Tela touch</label>
+                  <div className="flex flex-col">
+                    <span
+                      className={` ${!isStorageDefined ? 'text-red-500' : ''} w-40 text-justify text-sm italic text-neutral-500 max-[500px]:w-36`}
+                    >
+                      Inserir espaço de HD ou SDD (ou os dois juntos).
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <div className="flex flex-col">
+                <span className="mb-4 text-lg font-bold">Tela e resolução</span>
+                <div className="flex max-[500px]:flex-col">
+                  <div className="flex w-48 flex-col">
+                    <label htmlFor="resolucao" className={`${errors.resolution && 'text-red-500'}`}>
+                      Resolução*
+                    </label>
+                    <input
+                      type="text"
+                      id="resolucao"
+                      placeholder="1080x720"
+                      className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                      {...register('resolution', {required: true})}
+                    />
+
+                    <label htmlFor="polegadas">Polegadas</label>
+                    <input
+                      type="number"
+                      id="polegadas"
+                      placeholder="14"
+                      className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                      {...register('inch', {valueAsNumber: true})}
+                    />
+
+                    <label htmlFor="frequenciaTela" className={`${errors.hertz && 'text-red-500'}`}>
+                      Frequência*
+                    </label>
+                    <div>
+                      <input
+                        type="number"
+                        id="frequenciaTela"
+                        placeholder="120"
+                        className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                        {...register('hertz', {required: true, valueAsNumber: true})}
+                      />
+                      <span className="ml-px">Hz</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label htmlFor="marcaPlaca">Marca da placa</label>
+                    <input
+                      type="text"
+                      id="marcaPlaca"
+                      placeholder="NVIDIA"
+                      className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                      {...register('graphics_card.brand.name')}
+                    />
+
+                    <label htmlFor="moldePlaca">Modelo da placa</label>
+                    <input
+                      type="text"
+                      id="marcaPlaca"
+                      placeholder="RTX 2000"
+                      className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
+                      {...register('graphics_card.model')}
+                    />
+
+                    <div className="flex gap-2">
+                      <input type="checkbox" id="touch" {...register('touch')} />
+                      <label htmlFor="touch">Tela touch</label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -357,36 +332,39 @@ export default function New() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-5 pt-5">
-          <div className="mb-2 flex flex-col items-center gap-1">
-            <span className="text-lg font-semibold italic">Imagens</span>
-            <div className="mb-5 h-px w-24 bg-neutral-200" />
-          </div>
+        <div className="mb-5 flex flex-col items-center justify-between gap-5 pt-5">
+          <span className="text-xl font-bold">Imagens</span>
+          <input type="file" accept="image/png, image/jpeg" multiple={true} id="imagens" className="hidden" onChange={getImages} />
+
           {imagesURLs.length == 0 ? (
             <>
-              <input type="file" accept="image/png, image/jpeg" multiple={true} id="imagens" className="hidden" onChange={getImages} />
               <label htmlFor="imagens">
-                <div className="flex items-center">
+                <div className="flex items-center gap-5">
                   <button>
                     <BiChevronLeft size={30} className="h-min cursor-not-allowed fill-neutral-500" />
                   </button>
-                  <div className="flex h-60 w-[180px] cursor-pointer items-center justify-center rounded border-[2px] border-dashed">
-                    <FiPlus />
+                  <div
+                    className={`${isPhotosUploaded ? '' : 'border-red-600'} flex h-60 w-[180px] cursor-pointer items-center justify-center rounded border-[2px] border-dashed`}
+                  >
+                    <FiPlus color={`${isPhotosUploaded ? '' : 'red'}`} />
                   </div>
                   <button>
-                    <BiChevronRight size={30} className="h-min cursor-not-allowed fill-neutral-500" />
+                    <BiChevronRight size={30} className={'} h-min cursor-not-allowed fill-neutral-500'} />
                   </button>
                 </div>
               </label>
             </>
           ) : (
-            <div className="flex h-60 items-center">
+            <div className="flex h-60 items-center gap-5">
               <button type="button" value={0} className="h-min" onClick={navigateImages}>
-                <BiChevronLeft size={30} className="transition hover:fill-sky-500" />
+                <BiChevronLeft size={30} className=" transition hover:fill-sky-500" />
               </button>
-              <div className="flex items-center">
-                <img src={imagesURLs[previewIndex]} className="w-[180px] rounded shadow" alt="" />
-              </div>
+              <label htmlFor="imagens">
+                <div className="flex items-center">
+                  <img src={imagesURLs[previewIndex]} className="w-[180px] cursor-pointer rounded shadow" alt="" />
+                </div>
+              </label>
+
               <button type="button" value={1} className="h-min" onClick={navigateImages}>
                 <BiChevronRight size={30} className="transition hover:fill-sky-500" />
               </button>
@@ -394,10 +372,10 @@ export default function New() {
           )}
 
           <textarea
-            className="h-40 w-60 resize-none rounded border p-2 outline-none transition focus:border-sky-500"
+            className="h-40 w-full resize-none rounded border border-neutral-300 p-2 outline-none transition focus:border-sky-500"
             id="notas"
             placeholder="Você pode escrever observações aqui..."
-            ref={notas}
+            {...register('note')}
           />
 
           <button

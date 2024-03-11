@@ -5,9 +5,9 @@ import Header from '../components/layout/Header';
 export default function Default() {
   if (Check()) {
     return (
-      <div className="my-screen flex flex-col bg-neutral-200 bg-opacity-50">
+      <div className="flex min-h-screen flex-col bg-neutral-200 bg-opacity-50">
         <Header />
-        <div className="mt-[60px] flex h-full w-full grow flex-col items-center p-1">
+        <div className="mt-[64px] flex grow">
           <Outlet />
         </div>
       </div>
