@@ -17,7 +17,7 @@ export type Notebook = {
     brand: {
       name: string;
     };
-  };
+  } | null;
   isArchived: boolean;
   hd: number;
   ssd: number;

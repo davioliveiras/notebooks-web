@@ -21,7 +21,6 @@ export function Modal({showModal, setShowModal, notebook}: props) {
 
   const [arrayURL, setArrayURL] = useState<string[]>([]);
   const [viewIndex, setViewIndex] = useState(0);
-  console.log(arrayURL);
 
   function deleteNotebook(event: MouseEvent<HTMLButtonElement>) {
     mutate();
@@ -69,7 +68,7 @@ export function Modal({showModal, setShowModal, notebook}: props) {
     <div
       className={`myModal ${!showModal ? 'flex' : 'hidden'} items-center justify-center bg-neutral-500 bg-opacity-50 p-10 backdrop-blur-sm`}
     >
-      <div id="teste" className="flex h-full max-h-[1000px] min-h-min w-full max-w-[1500px] flex-col gap-10 rounded  bg-white p-5">
+      <div id="teste" className="flex max-h-[600px] min-h-min w-full max-w-[1000px] flex-col gap-10 rounded  bg-white p-5">
         <div className="flex justify-between">
           <span className="text-2xl font-bold">Notebook {notebook.code}</span>
           <AiOutlineClose
@@ -145,7 +144,7 @@ export function Modal({showModal, setShowModal, notebook}: props) {
             <div className="flex flex-col">
               <div className="font-semibold">Placa de vídeo</div>
               <span>
-                {notebook.graphics_card.brand.name} {notebook.graphics_card.model}
+                {notebook.graphics_card?.brand.name} {notebook.graphics_card?.model}
               </span>
             </div>
           </div>

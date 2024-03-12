@@ -89,7 +89,7 @@ export default function Pdfpage({notebook}: props) {
             </View>
             <View>
               <Text style={style.label}>Placa de vídeo</Text>
-              <Text style={style.text}>{`${notebook.graphics_card.brand.name} ${notebook.graphics_card.model}`}</Text>
+              <Text style={style.text}>{`${notebook.graphics_card?.brand.name} ${notebook.graphics_card?.model}`}</Text>
             </View>
           </View>
 

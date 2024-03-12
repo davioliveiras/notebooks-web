@@ -22,7 +22,7 @@ export default function Card(props: props) {
     return (
       <>
         <Modal showModal={!showModal} setShowModal={setShowModal} notebook={notebook} />
-        <div className="flex h-60 w-[340px] justify-between rounded bg-white bg-opacity-90 p-3 font-normal shadow">
+        <div className="flex h-60 max-w-[340px] justify-between rounded bg-white bg-opacity-90 p-3 font-normal shadow">
           <div className="ml-4 mr-2 flex flex-col gap-1">
             <span className="mb-4 min-w-20 rounded bg-neutral-200 bg-opacity-60 text-center font-medium shadow-sm">
               {props.notebook.code}

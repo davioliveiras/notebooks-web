@@ -12,10 +12,20 @@ export default function New() {
   const [imagesURLs, setImagesURLs] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [filesToUpload, setFilesToUpload] = useState<FormData>();
-  const [statusUpload, setStatusUpload] = useState('Salvar');
   const [isPhotosUploaded, setIsPhotosUploaded] = useState(true);
-  const [isStorageDefined, setIsStorageDefined] = useState(true);
+  const [isStorageDefined, setIsStorageDefined] = useState<number[]>([NaN, NaN]);
+  const [storageAlert, setStorageAlert] = useState(false);
+  const [isGraphicsDefined, setIsGraphicsDefined] = useState<string[]>(['', '']);
+  const [graphicsAlert, setGraphicsAlert] = useState('');
+  const [statusUpload, setStatusUpload] = useState('Salvar');
+
   const url = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<Notebook>();
 
   function getImages(event: ChangeEvent<HTMLInputElement>) {
     const {files} = event.target;
@@ -44,11 +54,30 @@ export default function New() {
     }
   }
 
-  const {
-    register,
-    handleSubmit,
-    formState: {errors},
-  } = useForm<Notebook>();
+  function extraValidation() {
+    if (Number.isNaN(isStorageDefined[0]) && Number.isNaN(isStorageDefined[1])) {
+      setStorageAlert(true);
+    } else {
+      setStorageAlert(false);
+    }
+
+    if (isGraphicsDefined[0] != '') {
+      if (isGraphicsDefined[1] == '') {
+        setGraphicsAlert('modelo');
+      } else setGraphicsAlert('');
+    }
+
+    if (isGraphicsDefined[1] != '') {
+      if (isGraphicsDefined[0] == '') {
+        setGraphicsAlert('marca');
+      } else setGraphicsAlert('');
+    }
+
+    if (isGraphicsDefined[0] == '' && isGraphicsDefined[1] == '') setGraphicsAlert('');
+    console.log(isGraphicsDefined);
+  }
+
+  /**** SUBMIT ****/
 
   const onSubmit: SubmitHandler<Notebook> = async (data) => {
     if (imagesURLs.length == 0) {
@@ -56,14 +85,25 @@ export default function New() {
       return;
     }
 
-    if (Number.isNaN(data.hd) && Number.isNaN(data.ssd)) {
-      setIsStorageDefined(false);
-      return;
-    }
+    if (!isStorageDefined) return;
+
+    if (graphicsAlert != '') return;
 
     setStatusUpload('Salvando');
 
     data.isArchived = false;
+    console.log(data);
+
+    if (isGraphicsDefined[0] != '') {
+      data.graphics_card = {
+        brand: {
+          name: isGraphicsDefined[0],
+        },
+        model: isGraphicsDefined[1],
+      };
+    } else {
+      data.graphics_card = null;
+    }
 
     const headers = {headers: {'Content-Type': 'multipart/form-data'}};
 
@@ -213,17 +253,18 @@ export default function New() {
                     <span className="ml-px">GB</span>
                   </div>
 
-                  <label htmlFor="ddr" className={`${errors.ddr && 'text-red-500'}`}>
-                    DDR*
-                  </label>
-
-                  <input
-                    type="number"
+                  <label htmlFor="ddr">DDR</label>
+                  <select
                     id="ddr"
-                    placeholder="4"
-                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                    {...register('ddr', {required: true, valueAsNumber: true})}
-                  />
+                    className="mb-5 w-[100px] border border-transparent border-b-gray-400 bg-transparent pb-1 outline-none transition focus:border-b-sky-500"
+                    {...register('ddr', {valueAsNumber: true})}
+                    defaultValue={4}
+                  >
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </select>
                 </div>
 
                 <div className="flex  flex-col">
@@ -235,6 +276,7 @@ export default function New() {
                       placeholder="1000"
                       className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
                       {...register('hd', {valueAsNumber: true})}
+                      onChange={(event) => setIsStorageDefined([parseInt(event.target.value), isStorageDefined[1]])}
                     />
                     <span className="ml-px">GB</span>
                   </div>
@@ -247,13 +289,14 @@ export default function New() {
                       placeholder="256"
                       className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
                       {...register('ssd', {valueAsNumber: true})}
+                      onChange={(event) => setIsStorageDefined([isStorageDefined[0], parseInt(event.target.value)])}
                     />
                     <span className="ml-px">GB</span>
                   </div>
 
                   <div className="flex flex-col">
                     <span
-                      className={` ${!isStorageDefined ? 'text-red-500' : ''} w-40 text-justify text-sm italic text-neutral-500 max-[500px]:w-36`}
+                      className={`${storageAlert ? 'text-red-500' : ''} w-40 text-justify text-sm italic text-neutral-500 max-[500px]:w-36`}
                     >
                       Inserir espaço de HD ou SDD (ou os dois juntos).
                     </span>
@@ -303,22 +346,26 @@ export default function New() {
                   </div>
 
                   <div className="flex flex-col">
-                    <label htmlFor="marcaPlaca">Marca da placa</label>
+                    <label htmlFor="marcaPlaca" className={`${graphicsAlert == 'marca' ? 'text-red-500' : ''}`}>
+                      Marca da placa
+                    </label>
                     <input
                       type="text"
                       id="marcaPlaca"
                       placeholder="NVIDIA"
+                      onChange={(event) => setIsGraphicsDefined([event.target.value, isGraphicsDefined[1]])}
                       className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                      {...register('graphics_card.brand.name')}
                     />
 
-                    <label htmlFor="moldePlaca">Modelo da placa</label>
+                    <label htmlFor="moldePlaca" className={`${graphicsAlert == 'modelo' ? 'text-red-500' : ''}`}>
+                      Modelo da placa
+                    </label>
                     <input
                       type="text"
                       id="marcaPlaca"
                       placeholder="RTX 2000"
+                      onChange={(event) => setIsGraphicsDefined([isGraphicsDefined[0], event.target.value])}
                       className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
-                      {...register('graphics_card.model')}
                     />
 
                     <div className="flex gap-2">
@@ -380,8 +427,8 @@ export default function New() {
 
           <button
             type="submit"
-            className={`h-min w-60 rounded bg-green-800 p-2 text-white 
-              ${statusUpload == 'Salvando' ? 'cursor-not-allowed pr-4 opacity-80' : ''}`}
+            className={`h-min w-60 rounded bg-green-800 p-2 text-white ${statusUpload == 'Salvando' ? 'cursor-not-allowed pr-4 opacity-80' : ''}`}
+            onClick={() => extraValidation()}
           >
             <div className="flex w-full items-center justify-center gap-2">
               <Spinner size={23} className={`animate-spin ${statusUpload == 'Salvando' ? 'visible' : 'hidden'}`} />

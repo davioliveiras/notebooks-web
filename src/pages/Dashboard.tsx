@@ -4,19 +4,15 @@ import {Notebook} from '../types/notebook';
 import {FiPlus} from 'react-icons/fi';
 import {NavLink} from 'react-router-dom';
 import {useGetNotes} from '../libs/swr';
-import {useState} from 'react';
-import {Modal} from '../components/dashboard/Modal';
+import Loading from '../layouts/Loading';
+import Error from '../layouts/Error';
 
 export default function Dashboard() {
   const {data, error, isLoading} = useGetNotes();
 
-  if (error) {
-    return <div>ocorreu um erro</div>;
-  }
+  if (error) return <Error />;
 
-  if (isLoading) {
-    return <div>carregando</div>;
-  }
+  if (isLoading) return <Loading />;
 
   let allArchived = true;
 
@@ -52,9 +48,9 @@ export default function Dashboard() {
     );
   } else {
     return (
-      <div className="flex w-full justify-center">
-        <div className="flex">
-          <div className="min flex min-h-min flex-wrap gap-10 max-[800px]:flex-col max-[800px]:flex-nowrap">
+      <div className="flex">
+        <div className="flex ">
+          <div className=" flex h-min flex-wrap gap-10 max-[800px]:flex-col max-[800px]:flex-nowrap">
             {data.map((items: Notebook) => (
               <div key={items.code}>
                 <Card notebook={items} />

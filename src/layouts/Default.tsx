@@ -1,6 +1,7 @@
 import {Navigate, Outlet} from 'react-router-dom';
 import {Check} from '../libs/cookies';
 import Header from '../components/layout/Header';
+import FooterLayout from './FooterLayout';
 
 export default function Default() {
   if (Check()) {
@@ -10,6 +11,7 @@ export default function Default() {
         <div className="mt-[64px] flex grow">
           <Outlet />
         </div>
+        <FooterLayout />
       </div>
     );
   } else {

@@ -9,6 +9,5 @@ async function myFetch(url: string) {
 
 export function useGetNotes() {
   const {data, error, isLoading, mutate} = useSWR('/notebook', myFetch);
-  console.log(data);
   return {data, error, isLoading, mutate};
 }
