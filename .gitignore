@@ -3,5 +3,4 @@ node_modules
 dist
 
 # files
-src/libs/firebaseconfig.ts
 .env
