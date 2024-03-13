@@ -96,7 +96,7 @@ export default function Pdfpage({notebook}: props) {
           <View style={style.viewCol}>
             <Image
               style={style.image}
-              src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/sC0Tz3o5O6UagfLfokVbHr0T7JL2/1709925619314.jpg'}
+              src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/sC0Tz3o5O6UagfLfokVbHr0T7JL2/1710341000573.jpg'}
             />
             <Text style={style.notas}>{`${notebook.note}`}</Text>
           </View>

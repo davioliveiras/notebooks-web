@@ -1,14 +1,17 @@
 import {Notebook} from '../types/notebook';
-import ArchivedCard from '../components/archives/ArchivedCard';
 import {useGetNotes} from '../libs/swr';
 import Archive from '../assets/archive-logo.png';
+import Card from '../components/dashboard/Card';
+import Loading from '../layouts/Loading';
+import Error from '../layouts/Error';
+import './style.css';
 
 export default function Archives() {
   const {data, error, isLoading} = useGetNotes();
 
-  if (isLoading) return <span>carregando</span>;
+  if (error) return <Error />;
 
-  if (error) return <span>ocorreu um erro</span>;
+  if (isLoading) return <Loading />;
 
   let allNotArchived = true;
 
@@ -31,12 +34,16 @@ export default function Archives() {
     );
   } else {
     return (
-      <div className="flex gap-2">
-        {data.map((items: Notebook) => (
-          <div key={items.code}>
-            <ArchivedCard notebook={items} />
-          </div>
-        ))}
+      <div className="myGrid h-min gap-5 p-3">
+        {data.map((items: Notebook) =>
+          items.isArchived ? (
+            <div key={items.code}>
+              <Card notebook={items} />
+            </div>
+          ) : (
+            ''
+          ),
+        )}
       </div>
     );
   }

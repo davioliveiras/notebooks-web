@@ -2,11 +2,10 @@ import ReactDOM from 'react-dom/client';
 import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom';
 import './index.css';
 import Dashboard from './pages/Dashboard.tsx';
-import Edit from './pages/Edit.tsx';
 import Default from './layouts/Default.tsx';
-import New from './pages/New.tsx';
 import Login from './pages/Login.tsx';
 import Archives from './pages/Archives.tsx';
+import Form from './components/layout/Form.tsx';
 
 const router = createBrowserRouter([
   {
@@ -27,11 +26,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/criar',
-        element: <New />,
+        element: <Form typeForm="create" />,
       },
       {
         path: 'notebook/:noteCode',
-        element: <Edit />,
+        element: <Form typeForm="edit" />,
       },
       {
         path: 'arquivos',

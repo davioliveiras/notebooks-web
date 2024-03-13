@@ -48,16 +48,16 @@ export default function Dashboard() {
     );
   } else {
     return (
-      <div className="flex">
-        <div className="flex ">
-          <div className=" flex h-min flex-wrap gap-10 max-[800px]:flex-col max-[800px]:flex-nowrap">
-            {data.map((items: Notebook) => (
-              <div key={items.code}>
-                <Card notebook={items} />
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="myGrid h-min gap-5 p-3">
+        {data.map((items: Notebook) =>
+          !items.isArchived ? (
+            <div key={items.code}>
+              <Card notebook={items} />
+            </div>
+          ) : (
+            ''
+          ),
+        )}
       </div>
     );
   }

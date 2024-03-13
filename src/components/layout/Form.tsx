@@ -1,14 +1,18 @@
 import {FiPlus} from 'react-icons/fi';
-import api from '../libs/axios';
-import {ChangeEvent, FormEvent, MouseEvent, useRef, useState} from 'react';
+import api from '../../libs/axios';
+import {ChangeEvent, MouseEvent, useState} from 'react';
 import {BiChevronLeft, BiChevronRight} from 'react-icons/bi';
 import {Spinner} from '@phosphor-icons/react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {SubmitHandler, useForm} from 'react-hook-form';
-import {Notebook} from '../types/notebook';
-import './new.css';
+import {Notebook} from '../../types/notebook';
+import '../../pages/new.css';
 
-export default function New() {
+type props = {
+  typeForm: string;
+};
+
+export default function Form({typeForm}: props) {
   const [imagesURLs, setImagesURLs] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
   const [filesToUpload, setFilesToUpload] = useState<FormData>();
@@ -17,15 +21,39 @@ export default function New() {
   const [storageAlert, setStorageAlert] = useState(false);
   const [isGraphicsDefined, setIsGraphicsDefined] = useState<string[]>(['', '']);
   const [graphicsAlert, setGraphicsAlert] = useState('');
-  const [statusUpload, setStatusUpload] = useState('Salvar');
+  const [statusUpload, setStatusUpload] = useState(typeForm == 'create' ? 'Salvar' : 'Editar');
 
   const url = useNavigate();
+
+  const {noteCode} = useParams();
 
   const {
     register,
     handleSubmit,
     formState: {errors},
-  } = useForm<Notebook>();
+  } = useForm<Notebook>(
+    typeForm == 'edit'
+      ? {
+          defaultValues: async () =>
+            api.get('/notebook/' + noteCode).then((response) => {
+              console.log(response.data);
+              setIsStorageDefined([response.data.hd ? response.data.hd : NaN, response.data.ssd ? response.data.ssd : NaN]);
+              setIsGraphicsDefined([
+                response.data.graphics_card?.brand.name ? response.data.graphics_card.brand.name : '',
+                response.data.graphics_card?.model ? response.data.graphics_card.model : '',
+              ]);
+
+              response.data.photos.map((item: {path: string}) => {
+                console.log(item.path);
+                setImagesURLs(['https://notebooksbucket.s3.us-east-2.amazonaws.com/' + item.path]);
+              });
+              return response.data;
+            }),
+        }
+      : {},
+  );
+
+  console.log(isGraphicsDefined);
 
   function getImages(event: ChangeEvent<HTMLInputElement>) {
     const {files} = event.target;
@@ -55,6 +83,7 @@ export default function New() {
   }
 
   function extraValidation() {
+    console.log(isStorageDefined);
     if (Number.isNaN(isStorageDefined[0]) && Number.isNaN(isStorageDefined[1])) {
       setStorageAlert(true);
     } else {
@@ -74,7 +103,6 @@ export default function New() {
     }
 
     if (isGraphicsDefined[0] == '' && isGraphicsDefined[1] == '') setGraphicsAlert('');
-    console.log(isGraphicsDefined);
   }
 
   /**** SUBMIT ****/
@@ -85,7 +113,7 @@ export default function New() {
       return;
     }
 
-    if (!isStorageDefined) return;
+    if (storageAlert) return;
 
     if (graphicsAlert != '') return;
 
@@ -104,27 +132,53 @@ export default function New() {
     } else {
       data.graphics_card = null;
     }
+    console.log(data);
 
     const headers = {headers: {'Content-Type': 'multipart/form-data'}};
 
-    await api
-      .post('upload-images', filesToUpload, headers)
-      .then((response) => {
-        console.log(response.data);
-        data.photos = response.data;
-      })
-      .catch((erro) => {
-        console.log(erro);
-      });
+    if (typeForm == 'create') {
+      await api
+        .post('upload-images', filesToUpload, headers)
+        .then((response) => {
+          console.log(response.data);
+          data.photos = response.data;
+        })
+        .catch((erro) => {
+          console.log(erro);
+        });
 
-    await api
-      .post('/notebook', data)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((erro) => {
-        console.log(erro);
-      });
+      await api
+        .post('/notebook', data)
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((erro) => {
+          console.log(erro);
+        });
+    } else {
+      if (!imagesURLs[0].includes('amazonaws')) {
+        await api
+          .post('upload-images', filesToUpload, headers)
+          .then((response) => {
+            console.log(response.data);
+            data.photos = response.data;
+          })
+          .catch((erro) => {
+            console.log(erro);
+          });
+      } else {
+        data.photos = [''];
+      }
+
+      await api
+        .put('/notebook', data)
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((erro) => {
+          console.log(erro);
+        });
+    }
 
     url('/dashboard');
   };
@@ -147,6 +201,7 @@ export default function New() {
               placeholder="123"
               className="bg mb-5 w-[200px] border border-transparent border-b-gray-400 bg-transparent pb-1 outline-none transition focus:border-b-sky-500"
               {...register('code', {required: true, valueAsNumber: true})}
+              disabled={typeForm == 'edit'}
             />
 
             <label htmlFor="marcaNotebook" className={`${errors.brand?.name && 'text-red-500'}`}>
@@ -353,17 +408,19 @@ export default function New() {
                       type="text"
                       id="marcaPlaca"
                       placeholder="NVIDIA"
+                      {...register('graphics_card.brand.name')}
                       onChange={(event) => setIsGraphicsDefined([event.target.value, isGraphicsDefined[1]])}
                       className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
                     />
 
-                    <label htmlFor="moldePlaca" className={`${graphicsAlert == 'modelo' ? 'text-red-500' : ''}`}>
+                    <label htmlFor="modeloPlaca" className={`${graphicsAlert == 'modelo' ? 'text-red-500' : ''}`}>
                       Modelo da placa
                     </label>
                     <input
                       type="text"
-                      id="marcaPlaca"
+                      id="modeloPlaca"
                       placeholder="RTX 2000"
+                      {...register('graphics_card.model')}
                       onChange={(event) => setIsGraphicsDefined([isGraphicsDefined[0], event.target.value])}
                       className="mb-5 w-[100px] border border-transparent border-b-gray-400 pb-1 outline-none transition focus:border-b-sky-500"
                     />

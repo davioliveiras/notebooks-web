@@ -11,14 +11,14 @@ export default function () {
         <img
           src={GitHub}
           onClick={() => window.open('https://github.com/davioliveiras', '_blank')}
-          className="w-6 cursor-pointer opacity-40 transition hover:opacity-60"
+          className="w-6 cursor-pointer transition hover:opacity-60"
         />
         <img
           src={LinkedIn}
           onClick={() => {
             window.open('https://linkedin.com/in/davisilvaoliveira', '_blank');
           }}
-          className="w-6 cursor-pointer fill-black opacity-55 transition hover:opacity-80"
+          className="w-6 cursor-pointer fill-black transition hover:opacity-80"
         />
       </div>
     </div>

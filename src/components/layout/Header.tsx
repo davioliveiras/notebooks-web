@@ -2,7 +2,7 @@ import {NavLink, useNavigate} from 'react-router-dom';
 import Hero from './Hero';
 import cookies from '../../libs/cookies';
 import {RiArchiveLine, RiHome6Line, RiMenuLine} from 'react-icons/ri';
-import {GoGear, GoSignOut} from 'react-icons/go';
+import {GoSignOut} from 'react-icons/go';
 import {FiPlus} from 'react-icons/fi';
 import {useState} from 'react';
 

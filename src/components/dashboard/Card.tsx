@@ -1,6 +1,6 @@
 import {Notebook} from '../../types/notebook';
 import api from '../../libs/axios';
-import {MouseEvent, useState} from 'react';
+import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useGetNotes} from '../../libs/swr';
 import {Modal} from './Modal';
@@ -17,16 +17,32 @@ export default function Card(props: props) {
 
   const notebook = props.notebook;
 
-  if (props.notebook.isArchived) return;
-  else
-    return (
-      <>
-        <Modal showModal={!showModal} setShowModal={setShowModal} notebook={notebook} />
-        <div className="flex h-60 max-w-[340px] justify-between rounded bg-white bg-opacity-90 p-3 font-normal shadow">
-          <div className="ml-4 mr-2 flex flex-col gap-1">
-            <span className="mb-4 min-w-20 rounded bg-neutral-200 bg-opacity-60 text-center font-medium shadow-sm">
-              {props.notebook.code}
-            </span>
+  function desarquivar() {
+    mutate();
+    const note = props.notebook;
+    note.isArchived = false;
+    note.photos = [''];
+    api.put('/notebook', note).then((response) => {
+      console.log(response);
+    });
+    mutate();
+  }
+
+  function deletar() {
+    mutate();
+    const note = props.notebook;
+    api.delete('/notebook/' + note.id).then((response) => {
+      console.log(response);
+    });
+    mutate();
+  }
+
+  return (
+    <>
+      {!props.notebook.isArchived ? <Modal showModal={!showModal} setShowModal={setShowModal} notebook={notebook} /> : ''}
+      <div className="flex h-60 max-w-[340px] justify-center gap-8 rounded bg-white bg-opacity-90 pb-2 pt-2 font-roboto  font-normal shadow">
+        <div className="mb-2 ml-2 mt-2 flex flex-col items-center justify-between">
+          <div>
             <div className="flex flex-col">
               <span className="font-semibold">Marca</span>
               <span>{props.notebook.brand.name}</span>
@@ -43,17 +59,8 @@ export default function Card(props: props) {
             </div>
           </div>
 
-          <div className="flex w-full flex-col items-center justify-center gap-1">
-            <div className="flex h-[180px] justify-center">
-              <img
-                src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + props.notebook.photos[0].path}
-                alt=""
-                className="h-[175px]  rounded-sm shadow-md"
-                // onLoad={() => console.log('hm')}
-                // loading="lazy"
-              />
-            </div>
-            <div className="flex gap-1">
+          <div className="flex flex-col gap-1">
+            {!props.notebook.isArchived ? (
               <button
                 className="min-w-20 rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600"
                 onClick={() => {
@@ -62,7 +69,18 @@ export default function Card(props: props) {
               >
                 Detalhes
               </button>
+            ) : (
+              <button
+                className="min-w-20 rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600"
+                onClick={() => {
+                  desarquivar();
+                }}
+              >
+                Desarquivar
+              </button>
+            )}
 
+            {!props.notebook.isArchived ? (
               <button
                 className="min-w-20 rounded bg-slate-700 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-slate-600"
                 onClick={() => {
@@ -71,10 +89,35 @@ export default function Card(props: props) {
               >
                 Editar
               </button>
+            ) : (
+              <button
+                className="min-w-20 rounded bg-red-600 pb-px pl-2 pr-2 pt-px text-slate-100 transition hover:bg-red-500"
+                onClick={() => {
+                  deletar();
+                }}
+              >
+                Deletar
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex h-full w-full flex-col items-center justify-center ">
+            <span className="mb-2 mt-2 min-w-20 rounded bg-neutral-200 bg-opacity-60 pl-2 pr-2 text-center font-medium shadow-sm">
+              Notebook {props.notebook.code}
+            </span>
+            <div className="flex h-full items-center justify-center ">
+              <img
+                src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + props.notebook.photos[0]}
+                alt=""
+                className="h-min w-[132px] rounded-sm shadow-md"
+              />
             </div>
           </div>
         </div>
-        <div className="flex grow flex-col gap-2"></div>
-      </>
-    );
+      </div>
+      <div className="flex grow flex-col gap-2"></div>
+    </>
+  );
 }
