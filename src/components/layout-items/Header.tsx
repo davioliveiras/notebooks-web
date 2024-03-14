@@ -20,6 +20,7 @@ export default function Header() {
     <>
       <div className="fixed flex h-16 w-full justify-center border-b-[1px] border-neutral-200 bg-neutral-50 backdrop-blur">
         <div className="ml-5 mr-5 flex w-full max-w-[1366px] items-center">
+          {/* MENU DESKTOP */}
           <div className="hidden h-6 grow gap-4 font-medium min-[800px]:flex">
             <NavLink to="/dashboard" className="flex items-center gap-1 rounded-md pl-2 pr-2 transition">
               <RiHome6Line size={18} />
@@ -41,6 +42,7 @@ export default function Header() {
             </NavLink>
           </div>
 
+          {/* MENU MOBILE */}
           <div className="flex grow min-[800px]:invisible">
             <RiMenuLine
               size={20}
@@ -84,10 +86,6 @@ export default function Header() {
             </div>
           </div>
 
-          {/* <div className="flex justify-center">
-            <GoGear size={20} className="mr-4 mt-px" />
-            <div className="mr-4 min-h-max w-px bg-neutral-300" />
-          </div> */}
           <Hero />
           <GoSignOut size={20} onClick={Exit} className="hover:cursor-pointer" />
         </div>

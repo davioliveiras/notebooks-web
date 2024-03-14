@@ -28,5 +28,5 @@ export type Notebook = {
   hertz: number;
   touch: boolean;
   note: string;
-  photos: string[];
+  photos: [{path: string}];
 };

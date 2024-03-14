@@ -1,7 +1,7 @@
 import GitHub from '../../assets/github.png';
 import LinkedIn from '../../assets/linkedin.png';
 
-export function FooterLogin() {
+export function LoginFooter() {
   return (
     <div className="mb-5 flex flex-col items-center gap-3 font-roboto text-neutral-600 min-[900px]:animate-fade-in-bottom min-[900px]:flex-row min-[900px]:gap-0">
       <div className="flex gap-2">

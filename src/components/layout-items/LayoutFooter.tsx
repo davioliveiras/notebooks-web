@@ -1,10 +1,10 @@
-import GitHub from '../assets/github.png';
-import LinkedIn from '../assets/linkedin.png';
+import GitHub from '../../assets/github.png';
+import LinkedIn from '../../assets/linkedin.png';
 
-export default function () {
+export default function LayoutFooter() {
   return (
     <div className="items flex justify-center">
-      <div className="mb-5 ml-10 mt-20 flex w-full max-w-[1366px] gap-2">
+      <div className="mb-5 ml-10 flex w-full max-w-[1366px] gap-2">
         <span className="text-neutral-400">
           Desenvolvido por <span className="font-medium text-neutral-400">Davi Oliveira</span>
         </span>

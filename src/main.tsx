@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard.tsx';
 import Default from './layouts/Default.tsx';
 import Login from './pages/Login.tsx';
 import Archives from './pages/Archives.tsx';
-import Form from './components/layout/Form.tsx';
+import Form from './pages/Form.tsx';
 
 const router = createBrowserRouter([
   {

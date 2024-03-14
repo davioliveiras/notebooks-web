@@ -1,4 +1,4 @@
-import SadFace from '../assets/sadface.png';
+import SadFace from '../../assets/sadface.png';
 
 export default function Error() {
   return (

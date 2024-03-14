@@ -17,21 +17,21 @@ export default function Card(props: props) {
 
   const notebook = props.notebook;
 
-  function desarquivar() {
-    mutate();
+  async function desarquivar() {
     const note = props.notebook;
     note.isArchived = false;
-    note.photos = [''];
-    api.put('/notebook', note).then((response) => {
+
+    note.photos = [{path: ''}];
+    await api.put('/notebook', note).then((response) => {
       console.log(response);
     });
     mutate();
   }
 
-  function deletar() {
+  async function deletar() {
     mutate();
     const note = props.notebook;
-    api.delete('/notebook/' + note.id).then((response) => {
+    await api.delete('/notebook/' + note.id).then((response) => {
       console.log(response);
     });
     mutate();
@@ -109,7 +109,7 @@ export default function Card(props: props) {
             </span>
             <div className="flex h-full items-center justify-center ">
               <img
-                src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + props.notebook.photos[0]}
+                src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/' + props.notebook.photos[0].path}
                 alt=""
                 className="h-min w-[132px] rounded-sm shadow-md"
               />

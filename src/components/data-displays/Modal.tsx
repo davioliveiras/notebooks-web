@@ -1,11 +1,11 @@
 import {Notebook} from '../../types/notebook';
-import './Modal.css';
+import './modal.css';
 import {AiOutlineClose} from 'react-icons/ai';
 import {useEffect, useState, MouseEvent} from 'react';
 import {BiChevronLeft, BiChevronRight} from 'react-icons/bi';
 import api from '../../libs/axios';
 import {useGetNotes} from '../../libs/swr';
-import Pdfpage from './Pdfpage';
+import Pdfpage from './GeneratePDF';
 import {PDFDownloadLink} from '@react-pdf/renderer';
 
 type props = {
@@ -28,13 +28,11 @@ export function Modal({showModal, setShowModal, notebook}: props) {
     mutate();
   }
 
-  function arquivar() {
-    // console.log(props)
-    mutate();
+  async function arquivar() {
     const note = notebook;
     note.isArchived = true;
-    note.photos = [''];
-    api.put('/notebook', note).then((response) => {
+    note.photos = [{path: ''}];
+    await api.put('/notebook', note).then((response) => {
       console.log(response);
     });
     setShowModal(!showModal);
@@ -43,8 +41,8 @@ export function Modal({showModal, setShowModal, notebook}: props) {
 
   useEffect(() => {
     const a: string[] = [];
-    notebook.photos.map((items: string) => {
-      a.push(items.toString());
+    notebook.photos.map((items: {path: string}) => {
+      a.push(items.path);
       setArrayURL(a);
     });
   }, [notebook.photos]);

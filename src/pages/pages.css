@@ -5,3 +5,11 @@
   /* justify-items: center; */
   /* grid-auto-columns: fit-content(400px);*/
 }
+
+input {
+  background-color: transparent;
+}
+
+textarea {
+  background-color: transparent;
+}

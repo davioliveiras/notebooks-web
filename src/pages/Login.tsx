@@ -3,8 +3,8 @@ import {Eye, EyeClosed, FilePdf, PencilSimple, PlusCircle, WarningCircle} from '
 import Google from '../assets/google-color-logo.png';
 import Screen from '../assets/screen.png';
 import Laptop from '../assets/laptop.png';
-import {FooterLogin} from '../components/login/FooterLogin';
-import {getAuth, signInWithPopup, GoogleAuthProvider} from 'firebase/auth';
+import {LoginFooter} from '../components/layout-items/LoginFooter';
+import {getAuth, GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
 import app from '../libs/firebaseconfig';
 import api from '../libs/axios';
 import cookies, {Check} from '../libs/cookies';
@@ -147,7 +147,7 @@ export default function Login() {
               </div>
             </div>
           </div>
-          <FooterLogin />
+          <LoginFooter />
         </div>
       ) : (
         <Navigate to="/dashboard" />

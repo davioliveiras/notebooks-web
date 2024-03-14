@@ -1,12 +1,12 @@
 import {FiPlus} from 'react-icons/fi';
-import api from '../../libs/axios';
+import api from '../libs/axios';
 import {ChangeEvent, MouseEvent, useState} from 'react';
 import {BiChevronLeft, BiChevronRight} from 'react-icons/bi';
 import {Spinner} from '@phosphor-icons/react';
 import {useNavigate, useParams} from 'react-router-dom';
 import {SubmitHandler, useForm} from 'react-hook-form';
-import {Notebook} from '../../types/notebook';
-import '../../pages/new.css';
+import {Notebook} from '../types/notebook';
+import '../pages/pages.css';
 
 type props = {
   typeForm: string;
@@ -35,25 +35,31 @@ export default function Form({typeForm}: props) {
     typeForm == 'edit'
       ? {
           defaultValues: async () =>
-            api.get('/notebook/' + noteCode).then((response) => {
-              console.log(response.data);
-              setIsStorageDefined([response.data.hd ? response.data.hd : NaN, response.data.ssd ? response.data.ssd : NaN]);
-              setIsGraphicsDefined([
-                response.data.graphics_card?.brand.name ? response.data.graphics_card.brand.name : '',
-                response.data.graphics_card?.model ? response.data.graphics_card.model : '',
-              ]);
+            api
+              .get('/notebook/' + noteCode)
+              .then((response) => {
+                setIsStorageDefined([response.data.hd ? response.data.hd : NaN, response.data.ssd ? response.data.ssd : NaN]);
+                setIsGraphicsDefined([
+                  response.data.graphics_card?.brand.name ? response.data.graphics_card.brand.name : '',
+                  response.data.graphics_card?.model ? response.data.graphics_card.model : '',
+                ]);
 
-              response.data.photos.map((item: {path: string}) => {
-                console.log(item.path);
-                setImagesURLs(['https://notebooksbucket.s3.us-east-2.amazonaws.com/' + item.path]);
-              });
-              return response.data;
-            }),
+                const tempArray: string[] = [];
+
+                response.data.photos.map((item: {path: string}) => {
+                  console.log(item.path);
+                  tempArray.push('https://notebooksbucket.s3.us-east-2.amazonaws.com/' + item.path);
+                });
+
+                setImagesURLs(tempArray);
+                return response.data;
+              })
+              .catch(() => {
+                url('/dashboard');
+              }),
         }
       : {},
   );
-
-  console.log(isGraphicsDefined);
 
   function getImages(event: ChangeEvent<HTMLInputElement>) {
     const {files} = event.target;
@@ -167,7 +173,7 @@ export default function Form({typeForm}: props) {
             console.log(erro);
           });
       } else {
-        data.photos = [''];
+        data.photos = [{path: ''}];
       }
 
       await api

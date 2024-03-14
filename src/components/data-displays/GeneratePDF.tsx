@@ -42,7 +42,7 @@ const style = StyleSheet.create({
   },
 });
 
-export default function Pdfpage({notebook}: props) {
+export default function GeneratePDF({notebook}: props) {
   return (
     <Document>
       <Page style={style.page}>
@@ -94,10 +94,7 @@ export default function Pdfpage({notebook}: props) {
           </View>
 
           <View style={style.viewCol}>
-            <Image
-              style={style.image}
-              src={'https://notebooksbucket.s3.us-east-2.amazonaws.com/sC0Tz3o5O6UagfLfokVbHr0T7JL2/1710341000573.jpg'}
-            />
+            <Image style={style.image} src={'https://m.media-amazon.com/images/I/61PrCgQ2KwL._AC_UF1000,1000_QL80_.jpg'} />
             <Text style={style.notas}>{`${notebook.note}`}</Text>
           </View>
         </View>
